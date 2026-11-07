@@ -1,0 +1,92 @@
+{
+ "all": {
+  "random": {
+   "type": "on_policy",
+   "split": "test",
+   "value": 0.0034736203759854456,
+   "se": 9.16337045497252e-05,
+   "ci_low": 0.0032985895922441853,
+   "ci_high": 0.003657904612084915,
+   "ci_method": "wilson",
+   "bootstrap_ci_low": 0.003296543359611886,
+   "bootstrap_ci_high": 0.0036506973923590056,
+   "n_rounds": 412250,
+   "n_clicks": 1432,
+   "lift_vs_random": 0.0
+  },
+  "bts": {
+   "type": "on_policy",
+   "split": "test",
+   "value": 0.004910287429880016,
+   "se": 3.630800102818125e-05,
+   "ci_low": 0.0048396363580390225,
+   "ci_high": 0.004981964732785255,
+   "ci_method": "wilson",
+   "bootstrap_ci_low": 0.004841192671045276,
+   "bootstrap_ci_high": 0.004980717678977279,
+   "n_rounds": 3706504,
+   "n_clicks": 18200,
+   "lift_vs_random": 0.4135935705084055
+  }
+ },
+ "men": {
+  "random": {
+   "type": "on_policy",
+   "split": "test",
+   "value": 0.0054099808626527305,
+   "se": 0.00019900963704694495,
+   "ci_low": 0.00503366825116979,
+   "ci_high": 0.005814261875017641,
+   "ci_method": "wilson",
+   "bootstrap_ci_low": 0.005041954953628735,
+   "bootstrap_ci_high": 0.005800272339172677,
+   "n_rounds": 135860,
+   "n_clicks": 735,
+   "lift_vs_random": 0.0
+  },
+  "bts": {
+   "type": "on_policy",
+   "split": "test",
+   "value": 0.006646482204777716,
+   "se": 7.347256497075362e-05,
+   "ci_low": 0.0065040200706751716,
+   "ci_high": 0.006792043454405249,
+   "ci_method": "wilson",
+   "bootstrap_ci_low": 0.006503336323119276,
+   "bootstrap_ci_high": 0.00678960764578477,
+   "n_rounds": 1223053,
+   "n_clicks": 8129,
+   "lift_vs_random": 0.22855928209673548
+  }
+ },
+ "women": {
+  "random": {
+   "type": "on_policy",
+   "split": "test",
+   "value": 0.004874023460093933,
+   "se": 0.0001367581161765734,
+   "ci_low": 0.004613218230157164,
+   "ci_high": 0.005149496862166592,
+   "ci_method": "wilson",
+   "bootstrap_ci_low": 0.004615669368459207,
+   "bootstrap_ci_high": 0.005136233582947088,
+   "n_rounds": 259334,
+   "n_clicks": 1264,
+   "lift_vs_random": 0.0
+  },
+  "bts": {
+   "type": "on_policy",
+   "split": "test",
+   "value": 0.006372568802534086,
+   "se": 5.213933355154137e-05,
+   "ci_low": 0.0062711885464782555,
+   "ci_high": 0.0064755772954902,
+   "ci_method": "wilson",
+   "bootstrap_ci_low": 0.006272083743702779,
+   "bootstrap_ci_high": 0.006473483192956214,
+   "n_rounds": 2329202,
+   "n_clicks": 14843,
+   "lift_vs_random": 0.307455504617385
+  }
+ }
+}

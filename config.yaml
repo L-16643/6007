@@ -1,0 +1,24 @@
+# 项目配置（数据流水线 & Ground Truth）
+data:
+  raw_dir: data/raw              # 全量 OBD 解压目录
+  sample_dir: data/sample        # 官方 1 万行样例
+  processed_dir: data/processed  # 处理后输出（--sample 时自动改为 data/processed_sample）
+  campaigns: [all, men, women]
+  policies: [random, bts]
+  max_rows: null                 # 每个 (policy, campaign) 最多读取行数；null = 全量
+  seed: 12345
+
+split:                           # 按时间顺序切分，避免未来信息泄漏
+  val_size: 0.0
+  test_size: 0.3
+
+features:
+  min_category_freq: 10          # 出现次数低于该值的用户类别并入 __other__
+  affinity_transform: log1p      # none | log1p
+  add_affinity_stats: true       # 追加 总亲和度 / 非零亲和商品数
+  standardize: true              # 连续特征在训练集上 z-score
+
+ground_truth:
+  alpha: 0.05                    # 95% 置信区间
+  n_bootstrap: 1000
+  out_dir: results/ground_truth

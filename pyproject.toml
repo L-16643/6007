@@ -1,0 +1,26 @@
+[project]
+name = "openbandit-ope"
+version = "0.1.0"
+description = "Off-policy evaluation study on the Open Bandit Dataset (ZOZOTOWN)"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=2.4.6",
+    "pandas>=3.1.1",
+    "pyarrow>=26.0.1",
+    "pyyaml>=6.0.3",
+    "scikit-learn>=1.9.1",
+    "scipy>=1.17.1",
+]
+
+[dependency-groups]
+dev = ["pytest>=9.2.0"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["ope"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
