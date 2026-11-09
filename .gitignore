@@ -7,3 +7,10 @@ data/raw/
 data/sample/
 data/processed*/
 results/*_sample/
+# LaTeX 编译中间文件
+*.aux
+*.log
+*.fls
+*.fdb_latexmk
+*.out
+*.synctex.gz
