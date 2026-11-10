@@ -109,7 +109,7 @@ BTS 日志的最小倾向得分为 1e-6，单个样本的重要性权重最高�
 |---|---|---|---|
 | A | 组长 / 架构 | 开题报告、实验架构说明书、答辩主稿 | 进行中 |
 | B | 数据流水线 | 数据加载器 `ope/data/`、Ground Truth 脚本 | ✅ 已完成 |
-| C | Bandit 策略算法 | LinUCB、LogisticTS 训练代码，策略动作分布（.npy） | 待开始 |
+| C | Bandit 策略算法 | LinUCB、LogisticTS 训练代码，策略动作分布（.npy）与[交接说明](docs/member_c_policies.md) | ✅ 已完成 |
 | D | OPE 评估引擎 | DM / IPS / SNIPS / DR 估计器、MSE 自动化脚本 | 待开始 |
 | E | 敏感度实验与可视化 | 截断敏感度实验、偏差-方差图表、答辩 Poster | 待开始 |
 
