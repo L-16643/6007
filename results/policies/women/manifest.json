@@ -1,0 +1,190 @@
+{
+  "campaign": "women",
+  "source": "full",
+  "training_split": "random/train",
+  "training_rows": 605114,
+  "data_splits": {
+    "random": {
+      "train": {
+        "n_rounds": 605114,
+        "n_clicks": 2762,
+        "ctr": 0.004564429181939271,
+        "time_start": "2019-11-24 00:00:00.686850+00:00",
+        "time_end": "2019-11-28 15:14:50.935984+00:00"
+      },
+      "test": {
+        "n_rounds": 259334,
+        "n_clicks": 1264,
+        "ctr": 0.004874023460093933,
+        "time_start": "2019-11-28 15:14:51.326000+00:00",
+        "time_end": "2019-11-30 23:59:57.920185+00:00"
+      }
+    },
+    "bts": {
+      "train": {
+        "n_rounds": 5434803,
+        "n_clicks": 33223,
+        "ctr": 0.006113009063989992,
+        "time_start": "2019-11-24 00:00:00.110777+00:00",
+        "time_end": "2019-11-28 15:23:48.034180+00:00"
+      },
+      "test": {
+        "n_rounds": 2329202,
+        "n_clicks": 14843,
+        "ctr": 0.006372568802534086,
+        "time_start": "2019-11-28 15:23:48.035014+00:00",
+        "time_end": "2019-11-30 23:59:59.862983+00:00"
+      }
+    }
+  },
+  "context_feature_names": [
+    "user_feature_0=36b7df2a",
+    "user_feature_0=4ae385d7",
+    "user_feature_0=81ce123c",
+    "user_feature_0=cef3390e",
+    "user_feature_0=__other_",
+    "user_feature_1=03a5648a",
+    "user_feature_1=2d03db55",
+    "user_feature_1=69df0a7f",
+    "user_feature_1=6ff54aa8",
+    "user_feature_1=8b506218",
+    "user_feature_1=f1c2d6a3",
+    "user_feature_1=__other_",
+    "user_feature_2=11629cac",
+    "user_feature_2=2723d2eb",
+    "user_feature_2=302deff1",
+    "user_feature_2=719dab53",
+    "user_feature_2=7ae37150",
+    "user_feature_2=7bc94a2d",
+    "user_feature_2=9b2d331c",
+    "user_feature_2=9f4e8271",
+    "user_feature_2=c2e4f76c",
+    "user_feature_2=c7cce490",
+    "user_feature_2=__other_",
+    "user_feature_3=05b76f5e",
+    "user_feature_3=06128286",
+    "user_feature_3=270b3e1c",
+    "user_feature_3=3aef83d3",
+    "user_feature_3=9bde591f",
+    "user_feature_3=9eb4f471",
+    "user_feature_3=c39b0c7d",
+    "user_feature_3=f97571b9",
+    "user_feature_3=__other_",
+    "aff_0",
+    "aff_1",
+    "aff_2",
+    "aff_3",
+    "aff_4",
+    "aff_5",
+    "aff_6",
+    "aff_7",
+    "aff_8",
+    "aff_9",
+    "aff_10",
+    "aff_11",
+    "aff_12",
+    "aff_13",
+    "aff_14",
+    "aff_15",
+    "aff_16",
+    "aff_17",
+    "aff_18",
+    "aff_19",
+    "aff_20",
+    "aff_21",
+    "aff_22",
+    "aff_23",
+    "aff_24",
+    "aff_25",
+    "aff_26",
+    "aff_27",
+    "aff_28",
+    "aff_29",
+    "aff_30",
+    "aff_31",
+    "aff_32",
+    "aff_33",
+    "aff_34",
+    "aff_35",
+    "aff_36",
+    "aff_37",
+    "aff_38",
+    "aff_39",
+    "aff_40",
+    "aff_41",
+    "aff_42",
+    "aff_43",
+    "aff_44",
+    "aff_45",
+    "aff_log_total",
+    "aff_n_nonzero"
+  ],
+  "linucb": {
+    "alpha": 0.02,
+    "ridge": 1.0
+  },
+  "logisticts": {
+    "prior_precision": 1.0,
+    "n_draws": 64,
+    "seed": 12345
+  },
+  "test": {
+    "random": {
+      "shape": [
+        259334,
+        46,
+        3
+      ],
+      "dtype": "float32",
+      "files": {
+        "linucb": "linucb_random_test.npy",
+        "logisticts": "logisticts_random_test.npy"
+      },
+      "row_keys_sha256": "f50ad070d25cb0bc11a6cec3171f30e9996236832e6f0f87d516dcefed61d665",
+      "random_ctr": 0.004874023460093933,
+      "random_ips_reference": {
+        "linucb": {
+          "value": 0.0074498523140043345,
+          "se": 0.001149446295481658,
+          "ci_low": 0.0051969789726973,
+          "ci_high": 0.00970272565531137,
+          "ci_method": "normal",
+          "bootstrap_ci_low": 0.005321323081431667,
+          "bootstrap_ci_high": 0.009578381546577001,
+          "snips_value": 0.007423117709437964,
+          "mean_weight": 1.0036015331580124,
+          "max_weight": 46.0,
+          "ess": 5658.0,
+          "n_rounds": 259334
+        },
+        "logisticts": {
+          "value": 0.006158322857781857,
+          "se": 0.0005385254759353105,
+          "ci_low": 0.005102832320191357,
+          "ci_high": 0.007213813395372357,
+          "ci_method": "normal",
+          "bootstrap_ci_low": 0.005091286719057278,
+          "bootstrap_ci_high": 0.007200484582623181,
+          "snips_value": 0.006198427797521745,
+          "mean_weight": 0.9935298206174277,
+          "max_weight": 46.0,
+          "ess": 22135.321556442916,
+          "n_rounds": 259334
+        }
+      }
+    },
+    "bts": {
+      "shape": [
+        2329202,
+        46,
+        3
+      ],
+      "dtype": "float32",
+      "files": {
+        "linucb": "linucb_bts_test.npy",
+        "logisticts": "logisticts_bts_test.npy"
+      },
+      "row_keys_sha256": "10a8b72005a88cfa67e82de48ea1f3bc9fa7a9f51410071b2a801b7f25d61bb5"
+    }
+  }
+}
