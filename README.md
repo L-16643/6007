@@ -12,23 +12,33 @@ OBD 同时记录了**全随机（Random）**与 **Bernoulli Thompson Sampling（
 ├── config.yaml              # 全部可调参数（路径、切分比例、特征、置信水平）
 ├── pyproject.toml / uv.lock # 依赖（uv 管理，Python 3.11）
 ├── ope/                     # 项目代码包
+│   ├── estimators.py        # OPE 估计器（成员 D，Week 1 最小实现）
+│   ├── reward_model.py      # 交叉拟合奖励模型（成员 D）
 │   └── data/                # 数据流水线 & Ground Truth（成员 B）
 │       ├── io.py            #   常量、下载、读取、清洗、商品特征对齐
 │       ├── features.py      #   用户上下文 / 商品特征编码
 │       ├── dataset.py       #   构建流水线 + 加载接口 load_bandit_feedback
 │       └── ground_truth.py  #   Ground Truth 与置信区间
+├── ope_demo.py              # Week 1 最小 OPE 实验（成员 D）
 ├── scripts/                 # 命令行入口
 │   ├── prepare_data.py      #   下载 + 清洗 + 切分 + 特征，一步完成
 │   ├── ground_truth.py      #   计算 Ground Truth
 │   └── example_policy.py    #   示例：生成策略分布并求其 Ground Truth
 ├── tests/                   # pytest 测试
+│   ├── test_data.py
+│   ├── test_estimators.py
+│   └── test_reward_model.py
 ├── docs/
-│   └── data_pipeline.md     # 数据流水线设计细节与结果
-├── results/ground_truth/    # Ground Truth 结果（csv / json）
+│   ├── data_pipeline.md     # 数据流水线设计细节与结果
+│   ├── ope_theory.md        # OPE 理论学习笔记（成员 D）
+│   └── week1_results.md     # Week 1 运行结果与验收
+├── results/
+│   ├── ground_truth/        # Ground Truth 结果（csv / json）
+│   └── week1/               # OPE 最小实验结果（csv / json）
 └── data/                    # 数据集与处理后的数组（不进 git，脚本自动生成）
 ```
 
-后续模块建议放在 `ope/` 下，与 `ope/data/` 并列，例如 `ope/policies/`（成员 C）、`ope/estimators/`（成员 D）、`ope/experiments/`（成员 E）。
+后续模块建议放在 `ope/` 下，与 `ope/data/` 并列，例如 `ope/policies/`（成员 C）、`ope/experiments/`（成员 E）。成员 D 的 OPE 最小实现已放在 `ope/estimators.py`、`ope/reward_model.py` 与 `ope_demo.py`。
 
 ## 快速开始
 
@@ -52,6 +62,10 @@ uv run python scripts/ground_truth.py          # 计算 Ground Truth -> results/
 
 ```bash
 uv run pytest                                  # 运行测试
+
+# OPE Week 1（需要 OBP；本机 conda 环境名为 openbandit）
+conda run -n openbandit python ope_demo.py
+conda run -n openbandit python -m pytest -q
 ```
 
 ## 组员如何使用数据
@@ -110,8 +124,40 @@ BTS 日志的最小倾向得分为 1e-6，单个样本的重要性权重最高�
 | A | 组长 / 架构 | 开题报告、实验架构说明书、答辩主稿 | 进行中 |
 | B | 数据流水线 | 数据加载器 `ope/data/`、Ground Truth 脚本 | ✅ 已完成 |
 | C | Bandit 策略算法 | LinUCB、LogisticTS 训练代码，策略动作分布（.npy） | 待开始 |
-| D | OPE 评估引擎 | DM / IPS / SNIPS / DR 估计器、MSE 自动化脚本 | 待开始 |
+| D | OPE 评估引擎 | DM / IPS / SNIPS / DR 估计器、奖励模型、Week 1 Demo | Week 1 完成 |
 | E | 敏感度实验与可视化 | 截断敏感度实验、偏差-方差图表、答辩 Poster | 待开始 |
+
+## 成员 D · OPE 最小实验（Week 1 完成）
+
+Week 1 已交付 OPE 最小实验、理论学习笔记和可复现结果。实验使用 OBP 的 <code>SyntheticBanditDataset</code>，自定义 context-dependent 奖励函数和行为策略，在 5000 条日志、固定种子 42 下运行 DM / IPS / SNIPS / DR，并把同一个 <code>q̂</code> 输入 OBP 0.4.1 官方估计器做数值对照。
+
+~~~bash
+conda run -n openbandit python ope_demo.py
+conda run -n openbandit python -m pytest -q
+~~~
+
+- 理论笔记：[docs/ope_theory.md](docs/ope_theory.md)
+- 运行结果与验收：[docs/week1_results.md](docs/week1_results.md)
+- 原始结果：[results/week1/ope_demo_results.csv](results/week1/ope_demo_results.csv)
+- 汇总结果：[results/week1/ope_demo_summary.json](results/week1/ope_demo_summary.json)
+- 测试：20 passed；本地实现与 OBP 官方实现的最大绝对差 <code>1.11e-16</code>。
+
+核心接口：
+
+~~~python
+from ope.reward_model import cross_fit
+from ope.estimators import evaluate
+
+q_hat = cross_fit(feedback, folds=3, seed=42)
+values = evaluate(feedback, action_dist, q_hat)
+~~~
+
+- <code>feedback</code>：与 OBP <code>bandit_feedback</code> 一致的字典，至少含 <code>context</code>、<code>action</code>、<code>position</code>、<code>reward</code>、<code>pscore</code>、<code>n_actions</code>、<code>len_list</code>。
+- <code>action_dist</code>：<code>(n, n_actions, len_list)</code>，也可传 <code>(n, n_actions)</code> 表示位置无关策略；每行对动作求和为 1。
+- <code>q_hat</code>：<code>(n, n_actions, len_list)</code>，由 <code>cross_fit</code> 三折交叉拟合得到。
+- <code>evaluate</code> 返回 <code>DM / IPS / SNIPS / DR</code> 四个标量；可选 <code>clip</code> 限制重要性权重。
+
+没有 OBP 的机器可使用本地回退：<code>python ope_demo.py --dataset local --no-save</code>。Week 2 将把当前最小实现整理为统一估计器接口，并扩展单元测试与 OBP 回归校验。
 
 ## 参考
 

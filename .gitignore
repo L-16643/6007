@@ -1,7 +1,30 @@
+# macOS 本地文件
+.DS_Store
+._*
+
+# Python 虚拟环境、缓存与构建产物
 .venv/
 __pycache__/
-*.pyc
+*.py[cod]
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+*.egg-info/
+
+# 测试覆盖率与 Notebook 缓存
+.coverage
+.coverage.*
+htmlcov/
+.ipynb_checkpoints/
+
+# 本地环境变量
+.env
+.env.*
+!.env.example
+!.env.template
+
 # 数据与生成的数组（用 scripts/prepare_data.py 重新生成）
 data/raw/
 data/sample/
