@@ -123,8 +123,8 @@ BTS 日志的最小倾向得分为 1e-6，单个样本的重要性权重最高�
 |---|---|---|---|
 | A | 组长 / 架构 | 开题报告、实验架构说明书、答辩主稿 | 进行中 |
 | B | 数据流水线 | 数据加载器 `ope/data/`、Ground Truth 脚本 | ✅ 已完成 |
-| C | Bandit 策略算法 | LinUCB、LogisticTS 训练代码，策略动作分布（.npy） | 待开始 |
-| D | OPE 评估引擎 | DM / IPS / SNIPS / DR 估计器、奖励模型、Week 1 Demo | Week 1 完成 |
+| C | Bandit 策略算法 | LinUCB、LogisticTS 训练代码，策略动作分布（.npy）与[交接说明](docs/member_c_policies.md) | ✅ 已完成 |
+| D | OPE 评估引擎 | DM / IPS / SNIPS / DR 估计器、[MSE 自动化脚本](scripts/evaluate_mse.py) | ✅ 已完成 |
 | E | 敏感度实验与可视化 | 截断敏感度实验、偏差-方差图表、答辩 Poster | 待开始 |
 
 ## 成员 D · OPE 最小实验（Week 1 完成）
@@ -157,7 +157,14 @@ values = evaluate(feedback, action_dist, q_hat)
 - <code>q_hat</code>：<code>(n, n_actions, len_list)</code>，由 <code>cross_fit</code> 三折交叉拟合得到。
 - <code>evaluate</code> 返回 <code>DM / IPS / SNIPS / DR</code> 四个标量；可选 <code>clip</code> 限制重要性权重。
 
-没有 OBP 的机器可使用本地回退：<code>python ope_demo.py --dataset local --no-save</code>。Week 2 将把当前最小实现整理为统一估计器接口，并扩展单元测试与 OBP 回归校验。
+没有 OBP 的机器可使用本地回退：<code>python ope_demo.py --dataset local --no-save</code>。在项目根目录复现 D 的真实日志样例评估（先运行 `python -m scripts.prepare_data --sample`）：
+
+```bash
+python -m scripts.train_policies --processed-dir data/processed_sample --out-dir outputs/policies/sample
+python -m scripts.evaluate_mse --processed-dir data/processed_sample --policy-dir outputs/policies/sample --out-dir results/ope_mse/sample
+```
+
+已有 C 的策略导出时直接运行第二条。全量数据使用默认路径，运行 `python -m scripts.evaluate_mse`。每个 campaign 默认从 BTS/test 独立抽取 20 组各 2,000 行，组内无放回、组间可重叠。每组重新三折拟合奖励模型，两种策略共享抽样及预测。以相应策略在 Random/test 的 IPS 估计为固定参考值，逐次平方误差写入 `replicates.csv`，按策略和估计器取平均得到 [MSE 汇总](results/ope_mse/sample/summary.csv)。参考值自身也有抽样误差。权重全零时 SNIPS 无定义，汇总同时给出有效次数。
 
 ## 参考
 

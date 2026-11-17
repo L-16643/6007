@@ -22,7 +22,7 @@ from __future__ import annotations
 import numpy as np
 
 
-def evaluate(feedback, action_dist, predicted_reward, *, clip=None):
+def evaluate(feedback, action_dist, predicted_reward, *, clip=None, allow_zero_mass=False):
     """Estimate all four policy values for the same logged feedback.
 
     Parameters
@@ -37,6 +37,9 @@ def evaluate(feedback, action_dist, predicted_reward, *, clip=None):
         Out-of-fold q_hat with shape (n_rounds, n_actions, len_list).
     clip : float, optional
         Upper bound for importance weights.  None means no clipping.
+
+    allow_zero_mass : bool
+        Return NaN for undefined SNIPS when all weights vanish.
 
     Returns
     -------
@@ -77,13 +80,13 @@ def evaluate(feedback, action_dist, predicted_reward, *, clip=None):
         if not np.isfinite(clip) or clip <= 0:
             raise ValueError("clip must be finite and positive")
         weights = np.minimum(weights, clip)
-    if not np.isfinite(weights).all() or not weights.any():
+    if not np.isfinite(weights).all() or (not allow_zero_mass and not weights.any()):
         raise ValueError("nonfinite weights or zero observed target-policy mass")
 
     dm_round = (pi[rows, :, position] * q_hat[rows, :, position]).sum(axis=1)
     return dict(
         DM=dm_round.mean(),
         IPS=np.mean(weights * reward),
-        SNIPS=np.average(reward, weights=weights),
+        SNIPS=np.average(reward, weights=weights) if weights.any() else np.nan,
         DR=np.mean(dm_round + weights * (reward - q_hat[rows, action, position])),
     )

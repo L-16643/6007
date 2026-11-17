@@ -1,0 +1,179 @@
+{
+  "campaign": "men",
+  "source": "full",
+  "training_split": "random/train",
+  "training_rows": 317008,
+  "data_splits": {
+    "random": {
+      "train": {
+        "n_rounds": 317008,
+        "n_clicks": 1505,
+        "ctr": 0.004747514258315247,
+        "time_start": "2019-11-24 00:00:03.800821+00:00",
+        "time_end": "2019-11-28 15:49:49.942356+00:00"
+      },
+      "test": {
+        "n_rounds": 135860,
+        "n_clicks": 735,
+        "ctr": 0.0054099808626527305,
+        "time_start": "2019-11-28 15:49:53.338691+00:00",
+        "time_end": "2019-11-30 23:59:58.340081+00:00"
+      }
+    },
+    "bts": {
+      "train": {
+        "n_rounds": 2853790,
+        "n_clicks": 18486,
+        "ctr": 0.0064777015828074245,
+        "time_start": "2019-11-24 00:00:00.020518+00:00",
+        "time_end": "2019-11-28 15:37:40.784003+00:00"
+      },
+      "test": {
+        "n_rounds": 1223053,
+        "n_clicks": 8129,
+        "ctr": 0.006646482204777716,
+        "time_start": "2019-11-28 15:37:40.799547+00:00",
+        "time_end": "2019-11-30 23:59:58.483312+00:00"
+      }
+    }
+  },
+  "context_feature_names": [
+    "user_feature_0=1a2b2ad3",
+    "user_feature_0=4ae385d7",
+    "user_feature_0=81ce123c",
+    "user_feature_0=cef3390e",
+    "user_feature_0=__other_",
+    "user_feature_1=03a5648a",
+    "user_feature_1=2d03db55",
+    "user_feature_1=6ff54aa8",
+    "user_feature_1=8b506218",
+    "user_feature_1=e3528f52",
+    "user_feature_1=f1c2d6a3",
+    "user_feature_1=__other_",
+    "user_feature_2=2723d2eb",
+    "user_feature_2=302deff1",
+    "user_feature_2=398773da",
+    "user_feature_2=719dab53",
+    "user_feature_2=7ae37150",
+    "user_feature_2=7bc94a2d",
+    "user_feature_2=9b2d331c",
+    "user_feature_2=9f4e8271",
+    "user_feature_2=c2e4f76c",
+    "user_feature_2=c7cce490",
+    "user_feature_2=__other_",
+    "user_feature_3=05b76f5e",
+    "user_feature_3=06128286",
+    "user_feature_3=270b3e1c",
+    "user_feature_3=3aef83d3",
+    "user_feature_3=47e7dd7d",
+    "user_feature_3=9bde591f",
+    "user_feature_3=c39b0c7d",
+    "user_feature_3=c9dce82b",
+    "user_feature_3=f97571b9",
+    "user_feature_3=__other_",
+    "aff_0",
+    "aff_1",
+    "aff_2",
+    "aff_3",
+    "aff_4",
+    "aff_5",
+    "aff_6",
+    "aff_7",
+    "aff_8",
+    "aff_9",
+    "aff_10",
+    "aff_11",
+    "aff_12",
+    "aff_13",
+    "aff_14",
+    "aff_15",
+    "aff_16",
+    "aff_17",
+    "aff_18",
+    "aff_19",
+    "aff_20",
+    "aff_21",
+    "aff_22",
+    "aff_23",
+    "aff_24",
+    "aff_25",
+    "aff_26",
+    "aff_27",
+    "aff_28",
+    "aff_29",
+    "aff_30",
+    "aff_31",
+    "aff_32",
+    "aff_33",
+    "aff_log_total",
+    "aff_n_nonzero"
+  ],
+  "linucb": {
+    "alpha": 0.02,
+    "ridge": 1.0
+  },
+  "logisticts": {
+    "prior_precision": 1.0,
+    "n_draws": 64,
+    "seed": 12345
+  },
+  "test": {
+    "random": {
+      "shape": [
+        135860,
+        34,
+        3
+      ],
+      "dtype": "float32",
+      "files": {
+        "linucb": "linucb_random_test.npy",
+        "logisticts": "logisticts_random_test.npy"
+      },
+      "row_keys_sha256": "4c6e0661d4bde2cfb8b34918bb14c27134c3161fae9e8f79c5d792016cf30603",
+      "random_ctr": 0.0054099808626527305,
+      "random_ips_reference": {
+        "linucb": {
+          "value": 0.004004121890181069,
+          "se": 0.001000975209840662,
+          "ci_low": 0.002042246529475948,
+          "ci_high": 0.005965997250886189,
+          "ci_method": "normal",
+          "bootstrap_ci_low": 0.002252318563226851,
+          "bootstrap_ci_high": 0.006006182835271603,
+          "snips_value": 0.003848003848003848,
+          "mean_weight": 1.0405711762108052,
+          "max_weight": 34.0,
+          "ess": 4158.0,
+          "n_rounds": 135860
+        },
+        "logisticts": {
+          "value": 0.0054822059472986896,
+          "se": 0.0005044354330578717,
+          "ci_low": 0.004493530665979396,
+          "ci_high": 0.006470881228617983,
+          "ci_method": "normal",
+          "bootstrap_ci_low": 0.004562997985058148,
+          "bootstrap_ci_high": 0.006510803860591785,
+          "snips_value": 0.005437649322039158,
+          "mean_weight": 1.0081940968644192,
+          "max_weight": 29.75,
+          "ess": 19487.2091675627,
+          "n_rounds": 135860
+        }
+      }
+    },
+    "bts": {
+      "shape": [
+        1223053,
+        34,
+        3
+      ],
+      "dtype": "float32",
+      "files": {
+        "linucb": "linucb_bts_test.npy",
+        "logisticts": "logisticts_bts_test.npy"
+      },
+      "row_keys_sha256": "44e1a64521e4d0d69a2759147f40cabfc75716059c4ed5a57937489f4c721606"
+    }
+  }
+}
