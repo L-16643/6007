@@ -22,3 +22,15 @@ ground_truth:
   alpha: 0.05                    # 95% 置信区间
   n_bootstrap: 1000
   out_dir: results/ground_truth
+
+experiments:
+  campaigns: [all, men, women]
+  window: intersection
+  sample_sizes: [1000, 2000, 5000, 10000, 20000]
+  repeats: 50
+  folds: 3
+  clip_grid: [1, 5, 10, 20, 50, 100, 500, 1000, null]
+  quantile_grid: [0.90, 0.95, 0.99, 0.995, 0.999]
+  seed: 42
+  reference_bootstrap: 1000
+  metric_bootstrap: 2000

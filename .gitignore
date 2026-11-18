@@ -9,6 +9,8 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.cache/
+tmp/
 build/
 dist/
 *.egg-info/
@@ -37,3 +39,9 @@ results/*_sample/
 *.fdb_latexmk
 *.out
 *.synctex.gz
+results/sensitivity/*/checkpoints/
+results/sensitivity/*/.writer.lock
+# E smoke-test and timing outputs can be regenerated locally.
+results/figures/e_sample/
+results/sensitivity/e_sample/
+results/sensitivity/e_pilot/

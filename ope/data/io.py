@@ -18,6 +18,8 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pyarrow as pa
+import pyarrow.csv as arrow_csv
 
 log = logging.getLogger(__name__)
 
@@ -131,7 +133,18 @@ def read_logs(root: str | Path, policy: str, campaign: str, max_rows: int | None
     dtypes.update({c: "string" for c in USER_CAT_COLS})
     dtypes.update({c: "float32" for c in affinity_cols(campaign)})  # 小整数计数，float32 省一半内存
     if max_rows is None:
-        df = pd.read_csv(path, dtype=dtypes, engine="pyarrow")
+        # Parse directly into compact Arrow types. Inferring int64 affinities
+        # and Python timestamp strings first can exhaust RAM on full BTS logs.
+        column_types = {c: pa.float32() for c in affinity_cols(campaign)}
+        column_types.update({c: pa.dictionary(pa.int32(), pa.string()) for c in USER_CAT_COLS})
+        column_types.update(item_id=pa.int16(), position=pa.int8(), click=pa.int8(),
+                            propensity_score=pa.float64(), timestamp=pa.timestamp("ns", tz="UTC"))
+        table = arrow_csv.read_csv(
+            path, read_options=arrow_csv.ReadOptions(use_threads=False),
+            convert_options=arrow_csv.ConvertOptions(column_types=column_types),
+        )
+        df = table.to_pandas(self_destruct=True)
+        del table
     else:
         df = pd.read_csv(path, dtype=dtypes, nrows=max_rows)
     df = df.drop(columns=[c for c in df.columns if c.startswith("Unnamed") or c == ""])
@@ -159,6 +172,9 @@ def clean_logs(df: pd.DataFrame, campaign: str) -> tuple[pd.DataFrame, dict]:
 
     倾向得分**不在这里裁剪**——裁剪是估计器层面的选择，留给敏感度实验。
     """
+    # Column replacements below must leave the caller's frame unchanged.
+    # A shallow frame copy shares read-only blocks until a filter or assignment.
+    df = df.copy(deep=False)
     n_items = N_ITEMS[campaign]
     report: dict = {"n_raw": int(len(df))}
     key_cols = ["timestamp", "item_id", "position", "click", "propensity_score"]
@@ -168,10 +184,12 @@ def clean_logs(df: pd.DataFrame, campaign: str) -> tuple[pd.DataFrame, dict]:
 
     mask_na = df[key_cols + feat_cols].isna().any(axis=1)
     report["dropped_missing"] = int(mask_na.sum())
-    df = df.loc[~mask_na]
+    if mask_na.any():
+        df = df.loc[~mask_na]
     dup = df.duplicated()
     report["dropped_duplicate"] = int(dup.sum())
-    df = df.loc[~dup]
+    if dup.any():
+        df = df.loc[~dup]
 
     checks = {
         "dropped_bad_item": ~df["item_id"].between(0, n_items - 1),
@@ -185,11 +203,14 @@ def clean_logs(df: pd.DataFrame, campaign: str) -> tuple[pd.DataFrame, dict]:
         m = m.to_numpy()
         report[name] = int((m & ~bad).sum())
         bad |= m
-    df = df.loc[~bad].copy()
+    if bad.any():
+        df = df.loc[~bad]
 
     df["timestamp"] = pd.to_datetime(df["timestamp"], utc=True, format="ISO8601")
     df["position"] = (df["position"] - 1).astype("int8")
-    df = df.sort_values("timestamp", kind="stable").reset_index(drop=True)
+    if not df["timestamp"].is_monotonic_increasing:
+        df = df.sort_values("timestamp", kind="stable")
+    df.index = pd.RangeIndex(len(df))
 
     report.update(
         n_clean=int(len(df)),

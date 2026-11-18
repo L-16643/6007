@@ -125,7 +125,7 @@ BTS 日志的最小倾向得分为 1e-6，单个样本的重要性权重最高�
 | B | 数据流水线 | 数据加载器 `ope/data/`、Ground Truth 脚本 | ✅ 已完成 |
 | C | Bandit 策略算法 | LinUCB、LogisticTS 训练代码，策略动作分布（.npy）与[交接说明](docs/member_c_policies.md) | ✅ 已完成 |
 | D | OPE 评估引擎 | DM / IPS / SNIPS / DR 估计器、[MSE 自动化脚本](scripts/evaluate_mse.py) | ✅ 已完成 |
-| E | 敏感度实验与可视化 | 截断敏感度实验、偏差-方差图表、答辩 Poster | 待开始 |
+| E | 敏感度实验与可视化 | 截断敏感度实验、偏差-方差图表、[实验报告](docs/member_e_experiments.md)、[最终 Poster](poster/poster.pdf) | ✅ 已完成 |
 
 ## 成员 D · OPE 最小实验（Week 1 完成）
 
@@ -165,6 +165,47 @@ python -m scripts.evaluate_mse --processed-dir data/processed_sample --policy-di
 ```
 
 已有 C 的策略导出时直接运行第二条。全量数据使用默认路径，运行 `python -m scripts.evaluate_mse`。每个 campaign 默认从 BTS/test 独立抽取 20 组各 2,000 行，组内无放回、组间可重叠。每组重新三折拟合奖励模型，两种策略共享抽样及预测。以相应策略在 Random/test 的 IPS 估计为固定参考值，逐次平方误差写入 `replicates.csv`，按策略和估计器取平均得到 [MSE 汇总](results/ope_mse/sample/summary.csv)。参考值自身也有抽样误差。权重全零时 SNIPS 无定义，汇总同时给出有效次数。
+
+## 成员 E · 敏感度实验、图表与 Poster
+
+实验入口复用 B 的日志加载、C 的冻结策略和 D 的四种估计器。同一子样本只交叉拟合一次奖励模型，全部目标策略、固定截断上限与正权重分位数规则共享预测。正式配置保存在 config.yaml 的 experiments 段。
+
+已附正式结果。仅重绘图表、更新报告或海报素材时，在项目根目录运行以下命令。
+
+~~~powershell
+uv sync --locked
+uv run python -m scripts.plot_sensitivity --poster-assets-dir poster --report docs/member_e_experiments.md
+~~~
+
+从头复算时，先准备处理后的日志和冻结策略。已具备这两项输入时，直接从 `run_sensitivity` 开始。下例使用新的输出目录，以便与正式交付逐项比较。
+
+~~~powershell
+uv run python -m scripts.prepare_data
+uv run python -m scripts.train_policies --out-dir outputs/policies/e_full
+uv run python -m scripts.run_sensitivity --out-dir tmp/e_reproduction
+uv run python -m scripts.plot_sensitivity --run-dir tmp/e_reproduction --out-dir tmp/e_reproduction/figures
+~~~
+
+中断后对同一输出目录用 `--resume` 恢复，也可显式增加 `--repeats`。每个运行记录输入、源码、环境和 CSV 摘要。新目录会获得新的运行 ID。子样本和点估计使用固定实验种子，汇总表的 bootstrap 种子还使用运行 ID，因此新运行的区间端点可能略有差异。
+
+官方样例可用以下命令检验数据流。样例的两种日志使用各自时间窗口。
+
+~~~powershell
+uv run python -m scripts.prepare_data --sample
+uv run python -m scripts.train_policies --processed-dir data/processed_sample --out-dir outputs/policies/e_sample
+uv run python -m scripts.run_sensitivity --processed-dir data/processed_sample --policy-dir outputs/policies/e_sample --out-dir results/sensitivity/e_sample --window native --sample-sizes 500 1000 2000 --repeats 5 --clip-grid 5 20 100 none
+~~~
+
+正式结果位于 results/sensitivity/e_full。[实验分析报告](docs/member_e_experiments.md)收录七张主图，包括三个 campaign 的截断对照、三张样本量图、方差柱状图、权重诊断和排序一致率。每张图在 results/figures/e_full 提供 PDF 和 PNG。需要逐 campaign 的完整截断分解和正权重分位数曲线时，在绘图命令后加 `--details-dir tmp/e_figure_details`。[最终 Poster](poster/poster.pdf)的数值可通过 poster/results_provenance.json 追溯到同一组实验结果。
+
+~~~powershell
+uv run pytest -q -rs
+latexmk -pdf -cd poster/poster.tex
+# 也可使用已安装的 Tectonic
+tectonic --keep-logs poster/poster.tex
+~~~
+
+完整实现依据见[成员 E 实现方案](docs/member_e_implementation_plan.md)。
 
 ## 参考
 

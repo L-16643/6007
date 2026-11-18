@@ -1,0 +1,29 @@
+{
+  "run_id": "16435ab2e024fdcd",
+  "font": "DejaVu Sans",
+  "png_dpi": 300,
+  "input_csv_sha256": {
+    "references.csv": "732ac92bb5b61478380bdb2b66d9b00f5c15d6c69e84b0ab886a089c5d73981d",
+    "replicates.csv": "c4251448ccc8919186bc58af2a439a56987621e8897389acced283694c2460d6",
+    "diagnostics.csv": "94f4b746e21cbd6324a8dfa389122aefef2377516f063e7246dcd9698bc49b0a",
+    "summary.csv": "0e5c5a7c4922bd82404b2c042421e8572f8d98ccc1cc804e4f68f41afb359de1",
+    "ranking.csv": "6173b4fd502a247354f4fb7b2b3078ff48bef0e2528456451235affc08e78a72"
+  },
+  "output_sha256": {
+    "clipping_mse_by_campaign.pdf": "d392a5f88ae9e59654511e0b0ee09e6321e4bcf99bb6f715720b888af684f153",
+    "clipping_mse_by_campaign.png": "50cef1fbc3a6a25ceaa8a4224faf314301180c1e27a231297247cd5a40aea722",
+    "sample_size_all.pdf": "f4e11005470972b9b1434854d20f9f6bfe03c01bc4bd9df0abf062a6cbd6be43",
+    "sample_size_all.png": "ebdb2ca30f3b18087ea225bf97092b24fbee210a973408f74406732333921887",
+    "sample_size_men.pdf": "a53aa1a40759cc7ffe204c3361bd7153ec91b3f8f090b5dd9a5910e1fb7fcf7a",
+    "sample_size_men.png": "8ac4b559395d2633c8b856887c4505e094c7429484472a449efdf83ca47f88b4",
+    "sample_size_women.pdf": "5099beae6c7d81bc7b4d705c5d09fac70b3235e5391425be1874b407e75b6146",
+    "sample_size_women.png": "2383a3c85983be4595b783c3128a450cec6f0b1daf629a1c084eb4bffbead668",
+    "variance_decomposition_by_campaign.pdf": "5a6c0e9b1484df61a99c58aaf76a62e34a97b754c9348c99889e7178f0b69c72",
+    "variance_decomposition_by_campaign.png": "f199ebbe99d1acc0c65720cac0613410e3b452143af4ad14ff479a6050055057",
+    "weight_diagnostics_by_campaign.pdf": "8a1f634386ec0c7c12a0aa890ade377cfb4061a50a6c3a8e3b46dd797fc56b34",
+    "weight_diagnostics_by_campaign.png": "dbb7d3ce52b8b1d67c12eb8260973eb0a5c0b0dfc3152b864dd9481b79fcba52",
+    "ranking_agreement_by_campaign.pdf": "20cec95cc009db821fa632f6cb3611c4f9cc967585386e0b43bf36f797885bba",
+    "ranking_agreement_by_campaign.png": "be1592cdd1418dd1f8aeec9f5b261fb0ecb2a3c3e13c2585cdf073cab48b166a"
+  },
+  "plotting_source_sha256": "f39ba754c4f6fc7821642d0349761d05480e0109fdcd18264913917d3eeb7376"
+}

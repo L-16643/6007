@@ -52,7 +52,9 @@ def test_clean_logs_drops_bad_rows_and_sorts():
     df.loc[2, "propensity_score"] = 0  # invalid pscore
     df.loc[3, "click"] = 2             # bad reward
     df = pd.concat([df, df.iloc[[10]]])  # duplicate
+    original = df.copy(deep=True)
     out, rep = clean_logs(df, "men")
+    pd.testing.assert_frame_equal(df, original)
     assert rep["dropped_bad_item"] == 1 and rep["dropped_bad_position"] == 1
     assert rep["dropped_bad_pscore"] == 1 and rep["dropped_bad_click"] == 1
     assert rep["dropped_duplicate"] == 1 and len(out) == 51 - 1 - 4

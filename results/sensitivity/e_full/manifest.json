@@ -1,0 +1,274 @@
+{
+  "schema_version": 1,
+  "run_id": "16435ab2e024fdcd",
+  "git_commit": "d5cf726d388cf170f9b340601b1cb0f4e0281215",
+  "computation_signature": "7d150011c5747745ff08e4c8f9423a8202d9f15a6d304f054edbf7bdeff7034f",
+  "computation": {
+    "schema_version": 1,
+    "seed": 42,
+    "folds": 3,
+    "window": "intersection",
+    "clip_grid": [
+      1.0,
+      5.0,
+      10.0,
+      20.0,
+      50.0,
+      100.0,
+      500.0,
+      1000.0,
+      null
+    ],
+    "quantile_grid": [
+      0.9,
+      0.95,
+      0.99,
+      0.995,
+      0.999
+    ],
+    "versions": {
+      "numpy": "2.5.4",
+      "pandas": "3.1.1",
+      "scipy": "1.18.1",
+      "scikit-learn": "1.9.1",
+      "threadpoolctl": "3.8.0"
+    },
+    "python": "3.13.5",
+    "blas_threads": 1,
+    "reference_bootstrap": 1000,
+    "metric_bootstrap": 2000,
+    "sources": {
+      "ope\\experiments\\__init__.py": "f4be445a7d178165d6ea4c3f3da0f227a1eeefda1b78c531fe62298adec7cb1a",
+      "ope\\experiments\\inputs.py": "c2a91a31ec19bf9411b1e7df9818daee914d1e369bdb68977cf187d12914ae78",
+      "ope\\experiments\\sensitivity.py": "af67445d11ee5ab44eb69b19e21e03c107e2e4b0f22b00e3c4234502fb0f3b98",
+      "ope\\estimators.py": "fb40a87dcf9e04ac68c5bce3460e19f4e0cc5daeb63a342cd01463a8d4ab98d4",
+      "ope\\reward_model.py": "e1228a591960914a732fa32e35bd509e93f16f2677dd81b8c474b919aae6e0c4",
+      "scripts\\run_sensitivity.py": "5f2c355205ac0c614402608b639a006a4c453abf430069a0abfcae124d0cec73"
+    }
+  },
+  "requested": {
+    "campaigns": [
+      "all",
+      "men",
+      "women"
+    ],
+    "sample_sizes": [
+      1000,
+      2000,
+      5000,
+      10000,
+      20000
+    ],
+    "repeats": 50
+  },
+  "sampling": "independent uniform subsets; within-repeat without replacement",
+  "interval_scope": "conditional on fixed logs and fixed references; finite estimates",
+  "provenance": {
+    "all": {
+      "input_signature": "284df48ce05ef030fc1befa574869c0d8143528bf4082a8556313ebea0a16d17",
+      "fingerprints": {
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\outputs\\policies\\e_full\\all\\manifest.json": "5850e96351eb821d3c6e3555466c5168b98a2d5f05a3d17861c7c2e1170c11b1",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\all\\meta.json": "2e9c0f58ebffcc2f21d4b6baf624135490758633a86b28401e892f7522ac110c",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\outputs\\policies\\e_full\\all\\linucb_random_test.npy": "d71487f1854ed9d24e436ba38579676d7c4febf2c2a83256ffdce9043ad6523e",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\outputs\\policies\\e_full\\all\\logisticts_random_test.npy": "c94764cce5cb26317a4f5f8565ddaeeff4f521e83b5f74efe9d4237dc3287fc0",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\all\\random_test\\context.npy": "b93d5d11b2f4585ba04e9a6a0fc04c2e72094318847561b65973c5974d3a5366",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\all\\random_test\\action.npy": "fcd0f5eeba9cceec22023cd172c27214d48cab03d5e67fd63362604f677af03c",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\all\\random_test\\position.npy": "8f3090d0a875bc469beb02af41563dde1dd3c77ab9948e277eea746a61009a0f",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\all\\random_test\\reward.npy": "a7a3c00849f227465b7c9f888db8fd18669b2cb17f94c023bb0b9b8a6f7f2b64",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\all\\random_test\\pscore.npy": "4e43931758a1109e6ce168f23fc8d85dab2043abeffeeaa3738e47c9971aa3a1",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\all\\random_test\\timestamp.npy": "d42d0b0dc47ddf21cf933a62bf1501fc867f347c36ee9df6f38aaf88c2a57328",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\outputs\\policies\\e_full\\all\\linucb_bts_test.npy": "e7e0551641b8a0df44c0507e2a7ba20c5a7fa2e1be85c49a9e0e09e2e0c3e8ba",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\outputs\\policies\\e_full\\all\\logisticts_bts_test.npy": "40ce05de0930ac52aa384f6853061d50f6bd1fd438d99f7c91787bac5d72ec39",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\all\\bts_test\\context.npy": "c43746bdb2e3b2c4507b0a05e434d072c3115dabfaa169c657767afcff5c7605",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\all\\bts_test\\action.npy": "e182e9fc720e7b1fb397ad763963756d704beb92639e495502201f07ebcd1fce",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\all\\bts_test\\position.npy": "6e177461c89360bf53c2372dc15213d07c7dc9a750b64880d0f3d41ce5844a09",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\all\\bts_test\\reward.npy": "280c961ed596a31a03b8671d342266eb12dcbab4158ec5ebdf02943a583a07e6",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\all\\bts_test\\pscore.npy": "8ba3a10db827bee027b6195328fdf4b9ffb6d67f3447e368cc16c6bc40d5d936",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\all\\bts_test\\timestamp.npy": "5c7d5630f039b7f24468f0c548e5374e5ef4b8122b298539cb4251ea405a1a90",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\all\\random_train\\timestamp.npy": "9cde45d1b2d1d3f5e18c4300d4bd6b75a7df4e5a398ee50e9b680d31c330e21c"
+      },
+      "window": {
+        "mode": "intersection",
+        "window_id": "ba97355ddb0efe41",
+        "logs": {
+          "random": {
+            "start_utc": "2019-11-28T17:04:50.826684+00:00",
+            "end_utc": "2019-11-30T23:59:59.408889+00:00",
+            "n_rounds": 412250,
+            "position_fraction": [
+              0.3332468162522741,
+              0.33338750758035174,
+              0.33336567616737417
+            ]
+          },
+          "bts": {
+            "start_utc": "2019-11-28T17:04:51.401911+00:00",
+            "end_utc": "2019-11-30T23:59:59.160792+00:00",
+            "n_rounds": 3699592,
+            "position_fraction": [
+              0.3333078350261326,
+              0.33335621873979615,
+              0.3333359462340712
+            ]
+          }
+        }
+      },
+      "source": "full",
+      "status": "export_row_keys_and_features_verified; current_files_sha256",
+      "reference_rank": {
+        "value": 0.0009490600363856882,
+        "ci_low": -0.0005794420861127956,
+        "ci_high": 0.0024808217101273495,
+        "status": "uncertain"
+      },
+      "preflight_seconds": 39.27129729999433
+    },
+    "men": {
+      "input_signature": "80659ea00cd1bd5833fb008e8f77744753aec1e1cdbfaadc147940b54f238b73",
+      "fingerprints": {
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\outputs\\policies\\e_full\\men\\manifest.json": "1afb3e815cfa40507da7d5d07252c70b59c1e795c3b00a69c8351a7e3ded6cfe",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\men\\meta.json": "66fce81b98519b39009fdad6d3b7ba01b015fd6c560a2ce021d269308b44a289",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\outputs\\policies\\e_full\\men\\linucb_random_test.npy": "e0e5f2097e91b667777ce4c34a0357b19603ec1cd3d0b5341ee1c3c4894b8113",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\outputs\\policies\\e_full\\men\\logisticts_random_test.npy": "4dbe562b08b6b5f3c71212d1b09519e220688c77789686cbf8153ffce8f93952",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\men\\random_test\\context.npy": "a053ffcf4677c882f28f91328f41020fe8a9d5a9eadda0e5ada7b8233f8e1942",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\men\\random_test\\action.npy": "05311ba8c7b176dd6b846e8a2ecc84425c8d30a6695af6691296bf0523dfff68",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\men\\random_test\\position.npy": "c3e4e6938cd61a29f0e0591894f77f4b7e19b1ebe719249a98230ee94a3799a3",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\men\\random_test\\reward.npy": "7d8f82bedeb2fda1ff5b07e44d37d44a7185ff94e4b47c97ac6fd39bd566c098",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\men\\random_test\\pscore.npy": "d08c95c3217272e497292b8788bd0c8ef502357700d0f975ed8d38684ea857f9",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\men\\random_test\\timestamp.npy": "3b1612ff0c2edaf39cf520cc368ba5ee16b4d6427aa07d6de74bbb7f1ccd713b",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\outputs\\policies\\e_full\\men\\linucb_bts_test.npy": "d227bef7458f93838626f60bd6d4c1f6c0c654c7ab4ed3b3f33ae43e3f0cb47a",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\outputs\\policies\\e_full\\men\\logisticts_bts_test.npy": "002857ea1bc61ebaac74009e4f91165b145c5bd320c6eabbb9a1e0e7e6064537",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\men\\bts_test\\context.npy": "6e0b6fec14ade604360f76441f77f96dfe187507597333a34edcc8097b66bafd",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\men\\bts_test\\action.npy": "06ae646651fb9920d96c69b6dbf6833eea1f81c400339189ba73b0e828a2d366",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\men\\bts_test\\position.npy": "bdac39625bb5e3728e97e472304224bed95d2d83f4af04929a649c7075519937",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\men\\bts_test\\reward.npy": "aeab32a7ff824d8bf2e58892fbb1eda669021fafe768256ba62851e7a6815b2d",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\men\\bts_test\\pscore.npy": "7bca57dcf591b555163e4edfff59a154bfc9ae30fddacfdec1b652ef9831ce3c",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\men\\bts_test\\timestamp.npy": "6d0fc77fd611ea0743d9de63c7b49bdc21f5eddb4a7ea7fe2de09382de00512e",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\men\\random_train\\timestamp.npy": "77342c27b41cea71e7fd83903ee01bc2ee31ee38ebf52c3f6cd03671efcdca96"
+      },
+      "window": {
+        "mode": "intersection",
+        "window_id": "d3ea8201693e27b0",
+        "logs": {
+          "random": {
+            "start_utc": "2019-11-28T15:49:53.338691+00:00",
+            "end_utc": "2019-11-30T23:59:58.340081+00:00",
+            "n_rounds": 135860,
+            "position_fraction": [
+              0.33324746062122773,
+              0.33335050787575443,
+              0.33340203150301784
+            ]
+          },
+          "bts": {
+            "start_utc": "2019-11-28T15:49:54.621986+00:00",
+            "end_utc": "2019-11-30T23:59:57.891542+00:00",
+            "n_rounds": 1216634,
+            "position_fraction": [
+              0.33322511124956233,
+              0.33338456758565027,
+              0.33339032116478745
+            ]
+          }
+        }
+      },
+      "source": "full",
+      "status": "export_row_keys_and_features_verified; current_files_sha256",
+      "reference_rank": {
+        "value": -0.0014780840571176211,
+        "ci_low": -0.0030344713767849257,
+        "ci_high": 2.0137917709406206e-05,
+        "status": "uncertain"
+      },
+      "preflight_seconds": 5.83456550000119
+    },
+    "women": {
+      "input_signature": "5ff052b8dd228217b297937bdf61a2127d6222b85489db83429ede29d46a6643",
+      "fingerprints": {
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\outputs\\policies\\e_full\\women\\manifest.json": "7d77c42aa59146380ef7ff11580efcc2d340e28d37658f79bc7f349843b731e1",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\women\\meta.json": "b6818228fb90d250973043881f4f3e9dfe4aa2d7697ac833844e53b540cd0a34",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\outputs\\policies\\e_full\\women\\linucb_random_test.npy": "d6cc9d89fd9947e6397087f3f13e51ae68d3d0eaf2f4322a9471c6c8577bee50",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\outputs\\policies\\e_full\\women\\logisticts_random_test.npy": "22b45cc3e012c223903ba009c6d456a5e6089257973d7cfdc88f82fa1fd8aae3",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\women\\random_test\\context.npy": "6e52f9ddbbbe7830a9d8f95ed8a8751606654617ab0d9d0f1f6fbdd638cbcd8a",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\women\\random_test\\action.npy": "9335367f110053f3a4748b1562f612b286b563261ac03c417d1d8391a23f0018",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\women\\random_test\\position.npy": "7519c30266b1113572621e3928fe78f5ad56b70684b14e469bf74ddaed2ff695",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\women\\random_test\\reward.npy": "4d3e1f46cba10e25fb87ca920a543c14cf87e77bd36fc7e9a410595b780d3833",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\women\\random_test\\pscore.npy": "7d2b72460d48f0145aeb574c05f07513c7b76a3336207c7df9c436df737aeec4",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\women\\random_test\\timestamp.npy": "9d4bfd3ef043c65e50414c7fa2f9ec017ae2d823df09043b32bdd258d548b560",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\outputs\\policies\\e_full\\women\\linucb_bts_test.npy": "a4a3a39e8d031d9e4a56215d87e5a8ed353c2b50dfeb0fc801509ca47aeedca4",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\outputs\\policies\\e_full\\women\\logisticts_bts_test.npy": "4d6a56fdece03d4a2aa6d49b9c1148d085dad9d2c2af0f8a90246b967b0e1b44",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\women\\bts_test\\context.npy": "faef3ad5ff51b139afae1b2c1c45fc549161d5728de0884ffd6ae1456171b00a",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\women\\bts_test\\action.npy": "827c67919dc1fa86bd7a1df28357462d401cea374b839fb03ab7bbaa209708e7",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\women\\bts_test\\position.npy": "8f415bcb2bebcff75130d297b289d44cadf557bb74a71c1dd6a5e255efb7d9c4",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\women\\bts_test\\reward.npy": "1694a0ff7e9b530a4c8eb1e6bdf98989dcde803b1cf369e898f0448560945936",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\women\\bts_test\\pscore.npy": "b27bde5db1efe22605fb529db8c97b2b50f56f9cd44151c5bb00a5fb5079364a",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\women\\bts_test\\timestamp.npy": "d9df3677365e77315a156dff4c572df9a6700d892a163a3d13aa1ae3a86fa9ca",
+        "D:\\city(dg) study\\dp and rl\\coures-project\\6007\\data\\processed\\women\\random_train\\timestamp.npy": "19b2be6a1d008e5738833d3b6696dc456ae401ef6e70aca70a95dd8f88e87a3a"
+      },
+      "window": {
+        "mode": "intersection",
+        "window_id": "79282ad5e3cdc2a3",
+        "logs": {
+          "random": {
+            "start_utc": "2019-11-28T15:23:48.676837+00:00",
+            "end_utc": "2019-11-30T23:59:57.920185+00:00",
+            "n_rounds": 257979,
+            "position_fraction": [
+              0.3332713127812729,
+              0.33336434360936357,
+              0.33336434360936357
+            ]
+          },
+          "bts": {
+            "start_utc": "2019-11-28T15:23:48.035014+00:00",
+            "end_utc": "2019-11-30T23:59:57.581626+00:00",
+            "n_rounds": 2329175,
+            "position_fraction": [
+              0.3332866787596467,
+              0.33335751929331203,
+              0.33335580194704134
+            ]
+          }
+        }
+      },
+      "source": "full",
+      "status": "export_row_keys_and_features_verified; current_files_sha256",
+      "reference_rank": {
+        "value": 0.0013150295179064962,
+        "ci_low": -0.000340110653386516,
+        "ci_high": 0.0029839607826606038,
+        "status": "uncertain"
+      },
+      "preflight_seconds": 12.83967439999833
+    }
+  },
+  "status": "complete",
+  "record_count": 84000,
+  "summary_count": 1680,
+  "ranking_count": 840,
+  "output_sha256": {
+    "references.csv": "732ac92bb5b61478380bdb2b66d9b00f5c15d6c69e84b0ab886a089c5d73981d",
+    "replicates.csv": "c4251448ccc8919186bc58af2a439a56987621e8897389acced283694c2460d6",
+    "diagnostics.csv": "94f4b746e21cbd6324a8dfa389122aefef2377516f063e7246dcd9698bc49b0a",
+    "summary.csv": "0e5c5a7c4922bd82404b2c042421e8572f8d98ccc1cc804e4f68f41afb359de1",
+    "ranking.csv": "6173b4fd502a247354f4fb7b2b3078ff48bef0e2528456451235affc08e78a72"
+  },
+  "verification": {
+    "tests_passed": 41,
+    "tests_skipped": 2,
+    "skip_reason": "optional OBP unavailable",
+    "png_count": 7,
+    "pdf_count": 7,
+    "poster_pages": 1,
+    "poster_size_points": [
+      0.0,
+      0.0,
+      841.89,
+      595.28
+    ],
+    "poster_sha256": "dc9c4e689dd5571ea4e4c4463d14c3b11b1bb4cbf99f4ca850a5a6deed896980",
+    "plotting_source_sha256": "f39ba754c4f6fc7821642d0349761d05480e0109fdcd18264913917d3eeb7376",
+    "official_archive_sha256": "e8ec18196582a5937381a1776382ca940689b90a18d2dcd1fb635be6df614d78",
+    "reviewed_on": "2026-11-18"
+  }
+}
