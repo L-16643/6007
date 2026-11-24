@@ -1,0 +1,351 @@
+% Visual trial version — does not replace Group 7 slides.tex
+% Compile: tectonic -X compile "Group 7 slides visual.tex"
+\documentclass[aspectratio=169,12pt]{beamer}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,booktabs,graphicx}
+\graphicspath{{visual-art/}{figures/}}
+\definecolor{navy}{HTML}{1F3A5F}
+\definecolor{accent}{HTML}{2F6690}
+\setbeamercolor{structure}{fg=navy}
+\setbeamercolor{title}{fg=navy}
+\setbeamercolor{frametitle}{fg=navy}
+\setbeamercolor{itemize item}{fg=accent}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize item}{\color{accent}\textbullet}
+\setbeamertemplate{footline}{%
+  \hfill{\scriptsize\color{navy!70}Group 7 \quad visual trial \quad \insertframenumber/\inserttotalframenumber\hspace{4mm}}}
+\setbeamertemplate{frametitle}{\vspace{1.2mm}\insertframetitle\par\vspace{0.8mm}{\color{navy}\hrule height 0.7pt}\vspace{2mm}}
+\setbeamerfont{frametitle}{series=\bfseries,size=\large}
+\setbeamerfont{itemize/enumerate body}{size=\small}
+\newcommand{\pe}{\pi_e}
+\newcommand{\pb}{\pi_b}
+\newcommand{\Vhat}{\widehat{V}}
+\newcommand{\speak}[1]{\begin{itemize}\setlength{\itemsep}{0.42em}\setlength{\parskip}{0pt}#1\end{itemize}}
+\newcommand{\art}[2][0.46\textwidth]{\includegraphics[width=#1,keepaspectratio]{#2}}
+\begin{document}
+
+\begin{frame}[plain]
+\centering
+\vspace{12mm}
+{\color{navy}\LARGE\bfseries Offline Policy Evaluation\\[2mm] with Real-World Bandit Logs\par}
+\vspace{9mm}
+{\large Jingzhe FENG \quad Jun LI \quad Kaiwen WANG\\[2mm] Siyu YAN \quad Zenghuan WANG\par}
+\vspace{8mm}
+{\color{navy} Group 7 \quad City University of Hong Kong (Dongguan)\par}
+\vspace{3mm}
+{\small DSC6007 Dynamic Programming and Reinforcement Learning\\[1mm]
+visual layout trial --- not the submission file}
+\end{frame}
+
+\begin{frame}{Why testing a new policy online is costly}
+\begin{columns}[T]
+\begin{column}{0.50\textwidth}
+\speak{
+\item Recommendation is a contextual bandit: user, item, click.
+\item A new policy $\pe$ chooses items to get more clicks.
+\item An early A/B test can drop conversion and hurt users.
+\item Industry needs a safe check \textbf{before} going online.
+}
+\end{column}
+\begin{column}{0.48\textwidth}
+\centering
+\art{online-vs-offline.jpg}\\[1mm]
+{\scriptsize Left: live A/B test. Right: estimate from old logs.}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Offline policy evaluation}
+\begin{columns}[T]
+\begin{column}{0.54\textwidth}
+\speak{
+\item OPE uses historical logs from a behavior policy $\pb$.
+\item We estimate the value of a new target policy $\pe$, without deploying it.
+\item The formula is the expected click rate under $\pe$.
+}
+\vspace{2mm}
+\[
+V(\pe)=\mathbb{E}_{x,\ell}\Bigl[\sum_a\pe(a\mid x,\ell)\,q(x,a,\ell)\Bigr]
+\]
+\end{column}
+\begin{column}{0.44\textwidth}
+\centering
+\art[0.95\linewidth]{online-vs-offline.jpg}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Why this problem is hard}
+\begin{columns}[T]
+\begin{column}{0.50\textwidth}
+\speak{
+\item We only see the click of the displayed item.
+\item We do not see the other items on the shelf.
+\item So the logged average click rate is not $V(\pe)$.
+\item This is distribution shift, or selection bias.
+}
+\end{column}
+\begin{column}{0.48\textwidth}
+\centering
+\art{shop-seen-unseen.jpg}\\[1mm]
+{\scriptsize Bright cards: shown to the user. Dark cards: never observed.}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Importance weights can explode}
+\begin{columns}[T]
+\begin{column}{0.50\textwidth}
+\speak{
+\item Weights $w_i=\pe(a_i\mid x_i,\ell_i)/p_i$ can correct the shift.
+\item Unclipped IPS is unbiased if propensities are correct and overlap holds.
+\item On BTS logs, $p_i$ can be $10^{-6}$.
+\item Then one click can dominate the estimate.
+}
+\end{column}
+\begin{column}{0.48\textwidth}
+\centering
+\art{huge-weight.jpg}\\[1mm]
+{\scriptsize One huge weight vs many tiny ones.}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Why we use Open Bandit Dataset}
+\begin{columns}[T]
+\begin{column}{0.50\textwidth}
+\speak{
+\item Many OPE papers use simulators. We want real logs.
+\item OBD: 26.9 million ZOZOTOWN fashion exposures.
+\item Two logging policies at once: Uniform Random and BTS.
+\item Random: bounded-weight reference. BTS: propensities down to $10^{-6}$.
+\item Advanced bandit topic; Saito et al., 2020 and 2021.
+}
+\end{column}
+\begin{column}{0.48\textwidth}
+\centering
+\art{two-log-streams.jpg}\\[1mm]
+{\scriptsize Two real log streams, not a simulator.}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{What we ask}
+\speak{
+\item We do not invent a new algorithm.
+\item First: how do DM, IPS, SNIPS and DR change with sample size and clipping?
+\item Second: can they rank two candidate policies correctly?
+}
+\end{frame}
+
+\begin{frame}{Estimators: DM and IPS}
+\speak{
+\item DM fits a click model $\widehat q$, then averages it under $\pe$. Low variance, but a wrong model gives bias.
+\item IPS reweights observed clicks by $w_i$.
+\item Unclipped IPS is unbiased under correct propensities and overlap, but variance can be huge.
+}
+\end{frame}
+
+\begin{frame}{Estimators: SNIPS, DR, and clipping}
+\speak{
+\item SNIPS is self-normalized IPS: often more stable, biased in finite samples.
+\item DR starts from DM and adds a weighted residual.
+\item \textbf{Unclipped} DR is consistent if either the reward model or the propensity model is right.
+\item Clipping $w_i^c=\min(w_i,c)$ cuts variance and adds bias.
+\item With a fixed cap, correct propensities alone no longer guarantee consistency if $\widehat q$ is wrong.
+}
+\end{frame}
+
+\begin{frame}{The logs}
+{\small Full test counts, before the shared time window used in OPE.}
+\vspace{1mm}
+\begin{center}
+\small
+\begin{tabular}{l rrrr}
+\toprule
+Campaign & Items $K$ & Random $n$ & BTS $n$ & BTS lift vs Random \\
+\midrule
+All & 80 & 412{,}250 & 3.71M & +41.4\% \\
+Men & 34 & 135{,}860 & 1.22M & +22.9\% \\
+Women & 46 & 259{,}334 & 2.33M & +30.7\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{1mm}
+\speak{
+\item Three campaigns. On All, BTS CTR is about 41\% higher than Random.
+\item Clicks are still rare: 0.3\% to 0.7\%.
+\item A higher BTS CTR does \textbf{not} tell us which OPE estimator is good.
+}
+\end{frame}
+
+\begin{frame}{Two frozen target policies}
+\speak{
+\item Train LinUCB and LogisticTS on Random/train, then freeze them.
+\item LinUCB is almost greedy: probability one on one item. Overlap with BTS is poor.
+\item LogisticTS is stochastic. Overlap is better.
+\item Test logs are never used for training.
+}
+\end{frame}
+
+\begin{frame}{The reference is not perfect ground truth}
+\begin{center}
+\small
+\begin{tabular}{llr}
+\toprule
+Campaign & Policy & Random/test IPS reference \\
+\midrule
+All & LinUCB & 0.563\% \\
+All & LogisticTS & 0.468\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{2mm}
+\speak{
+\item These policies never went online, so there is no on-policy CTR.
+\item Random/test IPS is a \textbf{reference}, not noiseless ground truth.
+\item On All the 95\% interval of the gap covers zero: ranking is \textbf{uncertain}.
+}
+\end{frame}
+
+\begin{frame}{How we run the study}
+\speak{
+\item BTS rows inside the common test time window.
+\item Sizes 1k to 20k, 50 repeats. Caps 1 to 1{,}000, plus no cap.
+\item Policies frozen. Reward model refit by 3-fold cross-fitting each subset.
+\item Error: MSE against the Random IPS reference $=$ bias$^2$ $+$ variance.
+}
+\end{frame}
+
+\begin{frame}{Result 1: clipping}
+\begin{center}
+\includegraphics[width=0.98\textwidth,height=0.48\textheight,keepaspectratio]{clipping_mse_by_campaign.png}
+\end{center}
+\speak{
+\item Main figure. X-axis: weight cap. Y-axis: reference MSE.
+\item Panels: All, Men, Women. $n=20{,}000$, 50 repeats.
+}
+\end{frame}
+
+\begin{frame}{What the clipping figure shows}
+\speak{
+\item DM is almost flat: it does not use the weights.
+\item Unclipped IPS, SNIPS and DR sit much higher.
+\item A small cap pulls those three toward DM. That is the bias--variance trade-off.
+}
+\end{frame}
+
+\begin{frame}{Clipping numbers}
+\begin{center}
+\small
+\begin{tabular}{llrr}
+\toprule
+All campaign & Cap & Unclipped DR MSE & Clipped DR MSE \\
+\midrule
+LinUCB & 1 & $1.42\times 10^{-4}$ & $7.63\times 10^{-6}$ \\
+LogisticTS & 1 & $1.44\times 10^{-5}$ & $1.46\times 10^{-6}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{2mm}
+\speak{
+\item Cap 1 cuts All DR reference MSE by \textbf{94.6\%} (LinUCB) and \textbf{89.8\%} (LogisticTS).
+\item Then the DR to DM ratio on All is about 1. Clipping is not free.
+\item Women / LinUCB: best cap is 10, not 1.
+}
+\end{frame}
+
+\begin{frame}{A few rows dominate the weights}
+\begin{columns}[T]
+\begin{column}{0.50\textwidth}
+\speak{
+\item All LinUCB: unclipped $\mathrm{ESS}/n$ is only 0.23\%.
+\item Cap 1 throws away about 97\% of the weight mass.
+\item Most IPS mass came from a few extreme rows.
+\item Best caps were chosen on the same reported grid.
+}
+\end{column}
+\begin{column}{0.48\textwidth}
+\centering
+\art{huge-weight.jpg}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Result 2: sample size}
+\begin{center}
+\includegraphics[width=0.95\textwidth,height=0.48\textheight,keepaspectratio]{sample_size_all.png}
+\end{center}
+\speak{
+\item All campaign, both policies. Top: LinUCB. Bottom: LogisticTS.
+\item Columns: bias, variance, reference MSE. Unclipped.
+}
+\end{frame}
+
+\begin{frame}{More data does not always help}
+\speak{
+\item LogisticTS: unclipped DR error falls as $n$ grows.
+\item LinUCB: unclipped DR error can \textbf{rise} with $n$, because a larger sample is more likely to hit one huge weight.
+\item More data does not automatically fix IPS-family estimators when overlap is poor.
+}
+\end{frame}
+
+\begin{frame}{Result 3: ranking}
+\begin{columns}[T]
+\begin{column}{0.56\textwidth}
+\begin{center}
+\scriptsize
+\begin{tabular}{lrrrr}
+\toprule
+Unclipped & DM & DR & IPS & SNIPS \\
+\midrule
+All & 48\% & 32\% & 30\% & 30\% \\
+Men & 58\% & 52\% & 52\% & 44\% \\
+Women & 38\% & 42\% & 44\% & 48\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{2mm}
+\speak{
+\item On All, DM agrees 48\% of the time. The others are about 30\%.
+\item Close to a coin flip, because the reference order is uncertain.
+}
+\end{column}
+\begin{column}{0.42\textwidth}
+\centering
+\art[0.98\linewidth]{coin-flip-ranking.jpg}\\[1mm]
+{\scriptsize Uncertain ranking.}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Takeaways and strengths}
+\speak{
+\item Unclipped IPS-family estimators are dominated by rare large weights.
+\item Clipping stabilizes DR, but then DR tracks DM.
+\item We cannot confidently rank LinUCB versus LogisticTS.
+\item Strengths: real industrial logs, a bounded Random reference, frozen policies, reproducible pipeline.
+}
+\end{frame}
+
+\begin{frame}{Limits and extensions}
+\speak{
+\item Limits: sparse clicks, weak LinUCB overlap, noisy Random reference, only two policies, same-grid clipping minima.
+\item Switch-DR was poster outlook. We did not implement it.
+\item Extensions: Switch-DR or shrinkage, more stochastic policies, session-level bootstrap.
+}
+\end{frame}
+
+\begin{frame}[plain]
+\centering
+\vspace{22mm}
+{\Large\bfseries\color{navy} Thank you\par}
+\vspace{8mm}
+{\large Questions\par}
+\vspace{12mm}
+{\small Group 7 \quad City University of Hong Kong (Dongguan)\\[1mm]
+visual layout trial}
+\end{frame}
+
+\end{document}
