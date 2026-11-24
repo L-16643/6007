@@ -311,41 +311,71 @@ Women & 46 & 259{,}334 & 0.487\% & 2.33M & 0.637\% & +30.7\% \\
 \note{I implemented and trained the two recommendation policies used in the evaluation. For each of our three campaigns, I used the earliest seventy percent of the Random logs as training data. All, the largest campaign, contains about nine hundred and sixty-two thousand training exposures. I fitted a separate model for each item and display slot.}
 \end{frame}
 
+% Scores and probabilities on this slide illustrate the selection rules.
 \begin{frame}{How the two policies choose an item}
-\begin{columns}[T,onlytextwidth]
-\begin{column}{0.47\textwidth}
-{\normalsize\bfseries\color{accent} LinUCB\par}
-\vspace{1mm}
-{\small Add an uncertainty bonus to predicted click reward. Choose the item with the highest score.\par}
-\end{column}
-\begin{column}{0.47\textwidth}
-{\normalsize\bfseries\color{policyteal} LogisticTS\par}
-\vspace{1mm}
-{\small Use 64 posterior draws. Each item's win rate gives its selection probability.\par}
-\end{column}
-\end{columns}
-
-\vspace{5mm}
-{\small\bfseries\color{navy} Illustrative probabilities for one user and one slot\par}
-\vspace{2mm}
 \centering
-\begin{tikzpicture}[x=1cm,y=0.66cm,font=\small]
-  \foreach \offset/\barcolor/\patterns in {
-    0/accent/{A/0/0/{0\%}, B/-1/1/{100\%}, C/-2/0/{0\%}},
-    7.35/policyteal/{A/0/0.25/{25\%}, B/-1/0.625/{62.5\%}, C/-2/0.125/{12.5\%}}} {
-    \begin{scope}[shift={(\offset,0)}]
-      \foreach \itemName/\y/\fraction/\percentLabel in \patterns {
-        \node[anchor=west,inner sep=0pt,text=navy] at (0,\y) {Item \itemName};
-        \begin{scope}[xshift=1.55cm,x=3.57cm]
-          \fill[navy!7] (0,\y-0.24) rectangle (1,\y+0.24);
-          \fill[\barcolor] (0,\y-0.24) rectangle (\fraction,\y+0.24);
-        \end{scope}
-        \node[anchor=west,inner sep=0pt,font=\small\bfseries] at (5.27,\y) {\percentLabel};
-      }
-    \end{scope}
+{\small\color{navy} Illustrative example for one user and one display slot\par}
+\vspace{3mm}
+\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
+  \path[use as bounding box] (0,-5.82) rectangle (13.55,0.20);
+  \draw[navy!20] (6.78,0.07) -- (6.78,-5.46);
+
+  \node[anchor=west,inner sep=0pt,text=accent,font=\normalsize\bfseries]
+    at (0,0) {LinUCB};
+  \node[anchor=west,inner sep=0pt,text=navy]
+    at (0,-0.58) {Linear prediction $+$ uncertainty bonus};
+  \foreach \itemName/\rowY/\base/\bonus/\total/\rowColor in {
+    A/-1.44/6/1/7/navy, B/-2.62/5/3/8/accent, C/-3.80/3/1/4/navy} {
+    \node[anchor=west,inner sep=0pt,text=\rowColor,font=\small\bfseries]
+      at (0,\rowY) {\itemName};
+    \fill[\rowColor!76] (0.70,{\rowY-0.21}) rectangle ({0.70+0.43*\base},{\rowY+0.21});
+    \fill[accent!25] ({0.70+0.43*\base},{\rowY-0.21})
+      rectangle ({0.70+0.43*\total},{\rowY+0.21});
+    \node[text=accent,font=\footnotesize\bfseries,inner sep=0pt]
+      at ({0.70+0.43*(\base+0.5*\bonus)},{\rowY+0.42}) {(+\bonus)};
+    \node[anchor=west,inner sep=0pt,text=\rowColor]
+      at (4.60,\rowY) {$\base+\bonus=\total$};
   }
+  \node[anchor=west,inner sep=0pt,text=accent,font=\normalsize\bfseries]
+    at (0,-4.76) {$8>7>4$ \enspace Recommend B};
+  \node[anchor=west,inner sep=0pt,text=navy,font=\footnotesize] at (0,-5.34)
+    {$P(A)=0\%$ \enspace $\boldsymbol{P(B)=100\%}$ \enspace $P(C)=0\%$};
+
+  \begin{scope}[xshift=7.14cm]
+    \node[anchor=west,inner sep=0pt,text=policyteal,font=\normalsize\bfseries]
+      at (0,0) {LogisticTS};
+    \node[anchor=west,inner sep=0pt,text=navy] at (0,-0.58) {Posterior for one model weight};
+
+    \draw[navy!32,-stealth] (0.45,-2.35) -- (6.12,-2.35);
+    \fill[policyteal!13] (1.45,-2.35) --
+      plot[domain=-2.6:2.6,samples=45] ({3.14+0.65*\x},{-2.35+1.15*exp(-0.5*\x*\x)}) -- (4.83,-2.35) -- cycle;
+    \draw[policyteal,thick]
+      plot[domain=-2.6:2.6,samples=45] ({3.14+0.65*\x},{-2.35+1.15*exp(-0.5*\x*\x)});
+    \draw[navy!65,dashed] (3.14,-2.35) -- (3.14,-1.20);
+    \draw[policyteal,thick] (3.89,-2.35) -- (3.89,-1.76);
+    \fill[policyteal] (3.89,-1.76) circle[radius=2.4pt];
+    \node[anchor=east,inner sep=0pt,font=\footnotesize,text=navy]
+      at (2.60,-1.28) {Uncertainty};
+    \node[anchor=east,inner sep=0pt,font=\footnotesize,text=navy]
+      at (3.14,-2.58) {Most likely weight};
+    \node[anchor=west,inner sep=0pt,font=\footnotesize\bfseries,text=policyteal]
+      at (3.89,-2.58) {Sampled weight};
+
+    \node[anchor=west,inner sep=0pt,text=navy,font=\small\bfseries]
+      at (0,-3.18) {Predicted CTR after one draw per item};
+    \foreach \itemName/\rowY/\ctr/\rowColor in {
+      A/-3.76/0.4/navy, B/-4.30/0.7/policyteal, C/-4.84/0.5/navy} {
+      \node[anchor=west,inner sep=0pt,text=\rowColor,font=\small\bfseries]
+        at (0,\rowY) {\itemName};
+      \fill[\rowColor!75] (0.70,{\rowY-0.12}) rectangle ({0.70+5.4*\ctr},{\rowY+0.12});
+      \node[anchor=west,inner xsep=4pt,text=\rowColor]
+        at ({0.70+5.4*\ctr},\rowY) {\ctr\%};
+    }
+    \node[anchor=west,inner sep=0pt,text=policyteal,font=\normalsize\bfseries]
+      at (0,-5.55) {Recommend B on this draw};
+  \end{scope}
 \end{tikzpicture}
-\note{The two methods handle uncertainty differently. LinUCB predicts click reward and adds an uncertainty bonus. The highest scoring item gets all the probability. Logistic Thompson Sampling fits a logistic click model. I fixed the random seed and used sixty-four draws from the approximate posterior. In this example, item B wins forty times, so its selection probability is sixty-two point five percent.}
+\note{LinUCB first uses a linear model to score each item's expected click reward. A starts higher at six, but B has a larger uncertainty bonus. Five plus three beats six plus one, so B receives all the selection probability. LogisticTS samples a weight vector for each item from its posterior. In this draw, B has the highest predicted click rate and wins. For the exported probabilities, I repeated the draw sixty-four times and counted each item's wins.}
 \end{frame}
 
 \begin{frame}{Twelve probability files for evaluation}
