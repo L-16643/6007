@@ -186,8 +186,7 @@ Women & 46 & 259{,}334 & 2.33M & +30.7\% \\
 % comparison for All is documented in docs/member_e_experiments.md.
 \begingroup
 \colorlet{policyteal}{teal!78!black}
-\newcommand{\memberCtitle}[1]{#1\hfill{\footnotesize\color{accent}Member C}}
-\begin{frame}{\memberCtitle{Training two policies on Random logs}}
+\begin{frame}{Training two policies on Random logs}
 \begin{columns}[c,onlytextwidth]
 \begin{column}{0.64\textwidth}
 {\small\bfseries\color{navy} Random training exposures\par}
@@ -215,7 +214,7 @@ Women & 46 & 259{,}334 & 2.33M & +30.7\% \\
 \note{I implemented and trained the two recommendation policies used in the evaluation. For each of our three campaigns, I used the earliest seventy percent of the Random logs as training data. All, the largest campaign, contains about nine hundred and sixty-two thousand training exposures. I fitted a separate model for each item and display slot.}
 \end{frame}
 
-\begin{frame}{\memberCtitle{How the two policies choose an item}}
+\begin{frame}{How the two policies choose an item}
 \begin{columns}[T,onlytextwidth]
 \begin{column}{0.47\textwidth}
 {\normalsize\bfseries\color{accent} LinUCB\par}
@@ -252,7 +251,7 @@ Women & 46 & 259{,}334 & 2.33M & +30.7\% \\
 \note{The two methods handle uncertainty differently. LinUCB predicts click reward and adds an uncertainty bonus. The highest scoring item gets all the probability. Logistic Thompson Sampling fits a logistic click model. I fixed the random seed and used sixty-four draws from the approximate posterior. In this example, item B wins forty times, so its selection probability is sixty-two point five percent.}
 \end{frame}
 
-\begin{frame}{\memberCtitle{Twelve probability files for evaluation}}
+\begin{frame}{Twelve probability files for evaluation}
 \begin{columns}[c,onlytextwidth]
 \begin{column}{0.27\textwidth}
 {\LARGE\bfseries\color{navy}12\par}
@@ -285,7 +284,7 @@ Women & 259,334 & 2,329,202 \\
 \note{After training I froze both policies and scored each campaign's two test logs separately. That gave us twelve probability files. Each row contains the selection probabilities for every item at each of the three display slots. I checked the row order and verified that the probabilities sum to one at each slot.}
 \end{frame}
 
-\begin{frame}{\memberCtitle{Reference click rates on Random/test}}
+\begin{frame}{Reference click rates on Random/test}
 \centering
 \begin{tikzpicture}[x=9.5cm,y=1cm,font=\small]
   \node[anchor=west,text=navy,font=\small\bfseries,inner sep=0pt] at (0,0.44) {Campaign};
