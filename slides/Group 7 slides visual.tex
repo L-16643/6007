@@ -112,15 +112,21 @@ V(\pe)=\mathbb{E}_{x,\ell}\Bigl[\sum_a\pe(a\mid x,\ell)\,q(x,a,\ell)\Bigr]
 \end{columns}
 \end{frame}
 
+% Member B presentation sequence. Cleaning, split, feature dimensions, and
+% propensity diagnostics come from results/sensitivity/e_full/inputs/*_data_meta.json
+% and docs/data_pipeline.md. On-policy test CTRs and Wilson intervals come from
+% results/ground_truth/ground_truth.csv.
+\begingroup
+\colorlet{policyteal}{teal!78!black}
 \begin{frame}{Why we use Open Bandit Dataset}
 \begin{columns}[T]
 \begin{column}{0.50\textwidth}
 \speak{
-\item Many OPE papers use simulators. We want real logs.
-\item OBD: 26.9 million ZOZOTOWN fashion exposures.
-\item Two logging policies at once: Uniform Random and BTS.
-\item Random: bounded-weight reference. BTS: propensities down to $10^{-6}$.
-\item Advanced bandit topic; Saito et al., 2020 and 2021.
+\item Many OPE studies rely on simulators; we want real production logs.
+\item OBD: 26.9M ZOZOTOWN fashion exposures over 7 days (Nov 2019), 3 display slots.
+\item Three campaigns: All ($K{=}80$), Men ($K{=}34$), Women ($K{=}46$).
+\item Two concurrent logging policies: Uniform Random and BTS.
+\item Saito et al., 2020 and 2021.
 }
 \end{column}
 \begin{column}{0.48\textwidth}
@@ -129,7 +135,120 @@ V(\pe)=\mathbb{E}_{x,\ell}\Bigl[\sum_a\pe(a\mid x,\ell)\,q(x,a,\ell)\Bigr]
 {\scriptsize Two real log streams, not a simulator.}
 \end{column}
 \end{columns}
+\note{Many offline policy evaluation papers rely on synthetic simulators, whereas we wanted real industrial logs. We use the Open Bandit Dataset from ZOZOTOWN, which records twenty-six point nine million fashion exposures over seven days across three display slots and three campaigns: All, Men, and Women. Crucially, it logs two production policies at the same time: Uniform Random and Bernoulli Thompson Sampling. That dual-log design gives us both a safe reference stream and a realistic skewed testbed.}
 \end{frame}
+
+\begin{frame}{Data pipeline: cleaning, alignment, and features}
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
+  \foreach \x/\stepTitle/\stepSub in {
+    0.00/{1. Raw OBD}/{26.9M rows, 6 logs},
+    3.40/{2. Clean \& align}/{dedup, item IDs},
+    6.80/{3. Time split}/{70\% train / 30\% test},
+    10.20/{4. Context $X$}/{fit on Random/train}} {
+    \fill[navy!6,rounded corners=2pt] (\x,0) rectangle (\x+3.08,1.16);
+    \draw[navy!35,rounded corners=2pt] (\x,0) rectangle (\x+3.08,1.16);
+    \node[align=center,text=navy] at (\x+1.54,0.76) {\small\bfseries \stepTitle};
+    \node[align=center,text=black!75] at (\x+1.54,0.33) {\scriptsize \stepSub};
+  }
+  \foreach \ax in {3.10,6.50,9.90} {
+    \draw[accent,thick,->,>=stealth] (\ax,0.58) -- (\ax+0.28,0.58);
+  }
+\end{tikzpicture}
+
+\vspace{4mm}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.47\textwidth}
+{\normalsize\bfseries\color{accent} Cleaning and alignment\par}
+\vspace{1mm}
+\speak{
+\item Dropped 4{,}944 exact duplicates (0.02\%); 0 missing or invalid rows.
+\item Fixed salted hash mismatch in item features across Random and BTS (verified bijection).
+\item Kept BTS propensities unclipped for downstream OPE sensitivity tests.
+}
+\end{column}
+\begin{column}{0.49\textwidth}
+{\normalsize\bfseries\color{policyteal} Leak-free split and shared loader\par}
+\vspace{1mm}
+\speak{
+\item Chronological 70/30 split per policy to prevent future leakage.
+\item \texttt{ContextEncoder} fitted only on Random/train: user one-hot + \texttt{log1p} z-scored affinities.
+\item Context dims: 116 (All), 69 (Men), 80 (Women); unified OBP-format loader.
+}
+\end{column}
+\end{columns}
+\note{I built the end-to-end data pipeline in four stages. First, during cleaning we validated all fields and removed four thousand nine hundred forty-four exact duplicates, about zero point zero two percent, with zero missing or invalid values. We also caught a subtle issue: item categorical hashes used different salts between Random and BTS, so I verified a bijection and aligned both streams to canonical item IDs. We intentionally left BTS propensities unclipped so estimators can be stressed fairly. Next, each log is split chronologically seventy-thirty to avoid future leakage. Finally, the context encoder is fitted only on Random train, producing one hundred sixteen, sixty-nine, and eighty features for All, Men, and Women through a single OBP-compatible loader shared by the whole team.}
+\end{frame}
+
+\begin{frame}{The logs}
+\noindent{\small\color{navy!75} Full test counts and on-policy click rates, before the shared time window used in OPE.\par}
+\vspace{2mm}
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.22}
+\setlength{\tabcolsep}{0.65em}
+\begin{tabular}{@{}l r r r r r r@{}}
+\toprule
+Campaign & Items $K$ & Random $n$ & Random CTR & BTS $n$ & BTS CTR & BTS lift \\
+\midrule
+All & 80 & 412{,}250 & 0.347\% & 3.71M & 0.491\% & +41.4\% \\
+Men & 34 & 135{,}860 & 0.541\% & 1.22M & 0.665\% & +22.9\% \\
+Women & 46 & 259{,}334 & 0.487\% & 2.33M & 0.637\% & +30.7\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{2mm}
+\speak{
+\item On All, BTS test CTR is 41.4\% higher than Random (95\% Wilson CI: 0.484--0.498\% vs 0.330--0.366\%).
+\item Clicks are very sparse (0.35\% to 0.66\%), which limits statistical precision.
+\item A higher BTS CTR does \textbf{not} tell us which OPE estimator is accurate.
+}
+\note{Here are the cleaned test-set counts and on-policy click rates across all three campaigns, before applying the shared time window used in the OPE experiments. On All, the largest campaign with eighty items, BTS achieves a zero point four nine one percent click rate versus zero point three four seven percent for Random, a forty-one point four percent lift with non-overlapping ninety-five percent Wilson intervals. Still, clicks are rare everywhere, between zero point three five and zero point six six percent. And notice that BTS beating Random online only shows the production bandit works—it does not tell us which offline estimator is accurate.}
+\end{frame}
+
+\begin{frame}{Propensity skew and the Random reference}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.47\textwidth}
+{\small\bfseries\color{navy} Two roles of the log streams\par}
+\vspace{1.5mm}
+\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
+  \node[anchor=west,inner sep=0pt,text=policyteal,font=\small\bfseries] at (0,0.88) {Random/test};
+  \node[anchor=east,inner sep=0pt,text=black!70,font=\scriptsize] at (6.15,0.88) {$p_i = 1/K$ \ (All: $0.0125$)};
+  \fill[navy!7] (0,0.44) rectangle (4.50,0.70);
+  \fill[policyteal] (0,0.44) rectangle (1.42,0.70);
+  \node[anchor=west,inner sep=0pt,text=policyteal,font=\footnotesize\bfseries] at (4.65,0.57) {$\le 80$};
+
+  \node[anchor=west,inner sep=0pt,text=accent,font=\small\bfseries] at (0,0.04) {BTS/test};
+  \node[anchor=east,inner sep=0pt,text=black!70,font=\scriptsize] at (6.15,0.04) {$p_i$ down to $10^{-6}$};
+  \fill[navy!7] (0,-0.40) rectangle (4.50,-0.14);
+  \fill[accent] (0,-0.40) rectangle (4.50,-0.14);
+  \node[anchor=west,inner sep=0pt,text=accent,font=\footnotesize\bfseries] at (4.65,-0.27) {$\le 10^6$};
+
+  \node[anchor=west,inner sep=0pt,text=black!65,font=\scriptsize] at (0,-0.66) {Max inverse propensity $1/p_i$ on All (log scale)};
+\end{tikzpicture}
+\vspace{1mm}
+\begin{itemize}\setlength{\itemsep}{0.28em}\setlength{\parskip}{0pt}
+\item \textbf{BTS/test}: 1.04\% of All rows $< 10^{-3}$; stress-tests OPE variance.
+\item \textbf{Random/test}: uniform $p_i$ bounds every weight by $K$.
+\end{itemize}
+\end{column}
+\begin{column}{0.49\textwidth}
+{\small\bfseries\color{navy} How we build the reference\par}
+\vspace{1mm}
+\begin{itemize}\setlength{\itemsep}{0.32em}\setlength{\parskip}{0pt}
+\item \textbf{Deployed} (Random, BTS): on-policy test CTR (95\% Wilson CI).
+\item \textbf{Unseen} (LinUCB, LogisticTS): unbiased IPS on Random/test:\\[2mm]
+\makebox[\linewidth][c]{{\small$\displaystyle \Vhat_{\mathrm{ref}}(\pe) = \frac{1}{n}\sum_{i=1}^{n} \pe(a_i \mid x_i, \ell_i)\, K\, r_i$}}
+\item Outputs normal \& click-sparse bootstrap CIs, mean weight ($\approx 1$), and ESS.
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{2.5mm}
+{\footnotesize\bfseries\color{navy} Random/test gives a bounded (still noisy) reference; BTS/test stress-tests OPE under skew.\par}
+\note{That brings us to how the two log streams play complementary roles. On All, BTS propensities drop all the way to ten to the minus six, with just over one percent of rows below ten to the minus three, so inverse weights can reach one million. That makes BTS test a realistic stress test for OPE estimators. By contrast, Random test has exact uniform propensities of one over K, bounding every weight by at most K, or eighty on All. For deployed policies, we use on-policy test CTR with Wilson intervals. For new policies that never went online, my ground-truth module estimates their value via unbiased IPS on held-out Random test, alongside normal and click-sparse bootstrap intervals, mean weight checks, and effective sample size. This bounded reference is still noisy when clicks are sparse, which sets up the research questions and estimator comparisons next.}
+\end{frame}
+\endgroup
 
 \begin{frame}{What we ask}
 \speak{
@@ -157,28 +276,6 @@ V(\pe)=\mathbb{E}_{x,\ell}\Bigl[\sum_a\pe(a\mid x,\ell)\,q(x,a,\ell)\Bigr]
 }
 \end{frame}
 
-\begin{frame}{The logs}
-{\small Full test counts, before the shared time window used in OPE.}
-\vspace{1mm}
-\begin{center}
-\small
-\begin{tabular}{l rrrr}
-\toprule
-Campaign & Items $K$ & Random $n$ & BTS $n$ & BTS lift vs Random \\
-\midrule
-All & 80 & 412{,}250 & 3.71M & +41.4\% \\
-Men & 34 & 135{,}860 & 1.22M & +22.9\% \\
-Women & 46 & 259{,}334 & 2.33M & +30.7\% \\
-\bottomrule
-\end{tabular}
-\end{center}
-\vspace{1mm}
-\speak{
-\item Three campaigns. On All, BTS CTR is about 41\% higher than Random.
-\item Clicks are still rare: 0.3\% to 0.7\%.
-\item A higher BTS CTR does \textbf{not} tell us which OPE estimator is good.
-}
-\end{frame}
 
 % Member C presentation sequence. Training and export counts come from
 % results/policies/{all,men,women}/manifest.json. The reference plot uses
