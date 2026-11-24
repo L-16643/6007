@@ -3,7 +3,7 @@
 \documentclass[aspectratio=169,12pt]{beamer}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
-\usepackage{amsmath,booktabs,graphicx}
+\usepackage{amsmath,booktabs,graphicx,tikz}
 \graphicspath{{visual-art/}{figures/}}
 \definecolor{navy}{HTML}{1F3A5F}
 \definecolor{accent}{HTML}{2F6690}
@@ -180,34 +180,154 @@ Women & 46 & 259{,}334 & 2.33M & +30.7\% \\
 }
 \end{frame}
 
-\begin{frame}{Two frozen target policies}
-\speak{
-\item Train LinUCB and LogisticTS on Random/train, then freeze them.
-\item LinUCB is almost greedy: probability one on one item. Overlap with BTS is poor.
-\item LogisticTS is stochastic. Overlap is better.
-\item Test logs are never used for training.
-}
+% Member C presentation sequence. Training and export counts come from
+% results/policies/{all,men,women}/manifest.json. The reference plot uses
+% the full Random/test normal intervals from the same manifests. The paired
+% comparison for All is documented in docs/member_e_experiments.md.
+\begingroup
+\colorlet{policyteal}{teal!78!black}
+\newcommand{\memberCtitle}[1]{#1\hfill{\footnotesize\color{accent}Member C}}
+\begin{frame}{\memberCtitle{Training two policies on Random logs}}
+\begin{columns}[c,onlytextwidth]
+\begin{column}{0.64\textwidth}
+{\small\bfseries\color{navy} Random training exposures\par}
+\vspace{3mm}
+\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
+  \foreach \campaign/\y/\fraction/\exposures in {
+    All/0/0.961915/{961,915}, Men/-1.04/0.317008/{317,008},
+    Women/-2.08/0.605114/{605,114}} {
+    \node[anchor=west,inner sep=0pt,text=navy] at (0,\y) {\campaign};
+    \begin{scope}[xshift=1.62cm,x=5.85cm]
+      \fill[accent] (0,\y-0.20) rectangle (\fraction,\y+0.20);
+      \node[anchor=west,inner xsep=3pt,font=\small\bfseries] at (\fraction,\y) {\exposures};
+    \end{scope}
+  }
+\end{tikzpicture}
+\end{column}
+\begin{column}{0.30\textwidth}
+{\small\bfseries\color{navy} One model per item and display slot\par}
+\vspace{2mm}
+{\small Fit LinUCB and LogisticTS using user features and logged clicks.\par}
+\vspace{4mm}
+{\small Use the earliest 70\% of Random logs in each campaign, then freeze the fitted policies.\par}
+\end{column}
+\end{columns}
+\note{I implemented and trained the two recommendation policies used in the evaluation. For each of our three campaigns, I used the earliest seventy percent of the Random logs as training data. All, the largest campaign, contains about nine hundred and sixty-two thousand training exposures. I fitted a separate model for each item and display slot.}
 \end{frame}
 
-\begin{frame}{The reference is not perfect ground truth}
-\begin{center}
-\small
-\begin{tabular}{llr}
-\toprule
-Campaign & Policy & Random/test IPS reference \\
-\midrule
-All & LinUCB & 0.563\% \\
-All & LogisticTS & 0.468\% \\
-\bottomrule
-\end{tabular}
-\end{center}
+\begin{frame}{\memberCtitle{How the two policies choose an item}}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.47\textwidth}
+{\normalsize\bfseries\color{accent} LinUCB\par}
+\vspace{1mm}
+{\small Add an uncertainty bonus to predicted click reward. Choose the item with the highest score.\par}
+\end{column}
+\begin{column}{0.47\textwidth}
+{\normalsize\bfseries\color{policyteal} LogisticTS\par}
+\vspace{1mm}
+{\small Use 64 posterior draws. Each item's win rate gives its selection probability.\par}
+\end{column}
+\end{columns}
+
+\vspace{5mm}
+{\small\bfseries\color{navy} Illustrative probabilities for one user and one slot\par}
 \vspace{2mm}
-\speak{
-\item These policies never went online, so there is no on-policy CTR.
-\item Random/test IPS is a \textbf{reference}, not noiseless ground truth.
-\item On All the 95\% interval of the gap covers zero: ranking is \textbf{uncertain}.
-}
+\centering
+\begin{tikzpicture}[x=1cm,y=0.66cm,font=\small]
+  \foreach \offset/\barcolor/\patterns in {
+    0/accent/{A/0/0/{0\%}, B/-1/1/{100\%}, C/-2/0/{0\%}},
+    7.35/policyteal/{A/0/0.25/{25\%}, B/-1/0.625/{62.5\%}, C/-2/0.125/{12.5\%}}} {
+    \begin{scope}[shift={(\offset,0)}]
+      \foreach \itemName/\y/\fraction/\percentLabel in \patterns {
+        \node[anchor=west,inner sep=0pt,text=navy] at (0,\y) {Item \itemName};
+        \begin{scope}[xshift=1.55cm,x=3.57cm]
+          \fill[navy!7] (0,\y-0.24) rectangle (1,\y+0.24);
+          \fill[\barcolor] (0,\y-0.24) rectangle (\fraction,\y+0.24);
+        \end{scope}
+        \node[anchor=west,inner sep=0pt,font=\small\bfseries] at (5.27,\y) {\percentLabel};
+      }
+    \end{scope}
+  }
+\end{tikzpicture}
+\note{The two methods handle uncertainty differently. LinUCB predicts click reward and adds an uncertainty bonus. The highest scoring item gets all the probability. Logistic Thompson Sampling fits a logistic click model. I fixed the random seed and used sixty-four draws from the approximate posterior. In this example, item B wins forty times, so its selection probability is sixty-two point five percent.}
 \end{frame}
+
+\begin{frame}{\memberCtitle{Twelve probability files for evaluation}}
+\begin{columns}[c,onlytextwidth]
+\begin{column}{0.27\textwidth}
+{\LARGE\bfseries\color{navy}12\par}
+\vspace{1mm}
+{\small\bfseries \texttt{.npy} files\par}
+\vspace{2mm}
+{\small One per policy, campaign, and test log.\par}
+\end{column}
+\begin{column}{0.69\textwidth}
+{\small\bfseries\color{navy} Rows scored by each frozen policy\par}
+\vspace{3mm}
+{\small
+\renewcommand{\arraystretch}{1.3}
+\setlength{\tabcolsep}{0.8em}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+ & \textbf{Random/test} & \textbf{BTS/test} \\
+ & \footnotesize IPS reference & \footnotesize OPE comparison \\
+\midrule
+All & 412,250 & 3,706,504 \\
+Men & 135,860 & 1,223,053 \\
+Women & 259,334 & 2,329,202 \\
+\bottomrule
+\end{tabular}\par}
+\end{column}
+\end{columns}
+\vspace{5mm}
+{\small\color{navy}
+\textbf{Export checks} \quad Verified test row order and that probabilities sum to 1 per slot.\par}
+\note{After training I froze both policies and scored each campaign's two test logs separately. That gave us twelve probability files. Each row contains the selection probabilities for every item at each of the three display slots. I checked the row order and verified that the probabilities sum to one at each slot.}
+\end{frame}
+
+\begin{frame}{\memberCtitle{Reference click rates on Random/test}}
+\centering
+\begin{tikzpicture}[x=9.5cm,y=1cm,font=\small]
+  \node[anchor=west,text=navy,font=\small\bfseries,inner sep=0pt] at (0,0.44) {Campaign};
+  \draw[accent,thick] (0.21,0.44) -- (0.245,0.44);
+  \fill[accent] (0.2275,0.44) circle[radius=2pt];
+  \node[anchor=west,inner sep=2pt] at (0.25,0.44) {LinUCB};
+  \draw[policyteal,thick] (0.43,0.44) -- (0.465,0.44);
+  \fill[policyteal] (0.4475,0.44) circle[radius=2pt];
+  \node[anchor=west,inner sep=2pt] at (0.47,0.44) {LogisticTS};
+  \node[anchor=west,text=navy,font=\small\bfseries,inner sep=0pt] at (1.07,0.44) {IPS estimate};
+
+  \foreach \tick in {0.2,0.4,0.6,0.8,1.0} {
+    \draw[black!13] (\tick,-0.02) -- (\tick,-3.60);
+    \node[below,inner sep=3pt,font=\footnotesize,text=black!72] at (\tick,-3.60) {\tick};
+  }
+  \draw[black!40] (0.2,-3.60) -- (1.0,-3.60);
+
+  \foreach \campaign/\y in {All/-0.65, Men/-1.78, Women/-2.91} {
+    \node[anchor=west,inner sep=0pt,text=navy,font=\small\bfseries] at (0,\y) {\campaign};
+  }
+  \foreach \y/\low/\value/\high/\barcolor in {
+    -0.42/0.358/0.563/0.768/accent,
+    -0.88/0.394/0.468/0.541/policyteal,
+    -1.55/0.204/0.400/0.597/accent,
+    -2.01/0.449/0.548/0.647/policyteal,
+    -2.68/0.520/0.745/0.970/accent,
+    -3.14/0.510/0.616/0.721/policyteal} {
+    \draw[\barcolor,thick] (\low,\y) -- (\high,\y);
+    \draw[\barcolor] (\low,\y-0.075) -- (\low,\y+0.075)
+      (\high,\y-0.075) -- (\high,\y+0.075);
+    \fill[\barcolor] (\value,\y) circle[radius=2.4pt];
+    \node[anchor=west,text=\barcolor,inner sep=0pt,font=\small\bfseries] at (1.07,\y) {\value\%};
+  }
+  \node[font=\footnotesize,text=black!72] at (0.6,-4.24) {Estimated click rate (\%)};
+\end{tikzpicture}\par
+\vspace{1mm}
+{\footnotesize Points mark IPS estimates. Lines show 95\% normal confidence intervals.\par}
+\vspace{1mm}
+{\footnotesize\bfseries\color{navy} On All, the paired 95\% interval for the difference includes zero.\par}
+\note{The Random test log gives us a reference click rate through inverse propensity scoring. On All, the estimates are about zero point five six percent for LinUCB and zero point four seven percent for LogisticTS. The paired interval for the difference includes zero, so the ranking remains uncertain. The BTS probability files feed the estimation and clipping experiments my teammates will discuss next.}
+\end{frame}
+\endgroup
 
 \begin{frame}{How we run the study}
 \speak{
